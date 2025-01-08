@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
+class CropDetailsProtectionController extends Controller
+{
+    public function cropprotectiondetails()
+    {
+        $cropTypes = DB::table('ag_crop_type_master')->pluck('crop_type_desc', 'crop_type_cd');
+        $cropNames = []; // Initialize empty array for crop names
+
+        return view('admin.cropprotectiondetails.cropprotectiondetails', [
+            'cropTypes' => $cropTypes,
+            'cropNames' => $cropNames // Pass empty crop names initially
+        ]);
+    }
+
+    public function getCropNam(Request $request)
+    {
+        $cropTypeCd = $request->input('crop_type_cd');
+        $cropNames = DB::table('ag_crop_name_master')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->pluck('crop_name_desc', 'crop_name_cd');
+
+        return response()->json($cropNames);
+    }
+    public function getDiseases(Request $request)
+    {
+        $cropNameCd = $request->input('crop_name_cd');
+
+        // Get the disease IDs associated with the selected crop
+        $diseaseIds = DB::table('ag_crop_master_disease_n_crop_name_n_control_measure_mapping')
+            ->where('crop_name_cd', $cropNameCd)
+            ->pluck('disease_cd');
+
+        // Fetch disease names based on disease IDs
+        $diseases = DB::table('ag_crop_disease_master')
+            ->whereIn('disease_cd', $diseaseIds)
+            ->pluck('disease_name', 'disease_cd');
+
+        return response()->json($diseases);
+    }
+
+    public function getCropDisease(Request $request)
+    {
+        $diseaseNameCd = $request->input('disease_cd');
+        $cropDisease = DB::table('ag_crop_master_disease_n_crop_name_n_control_measure_mapping')
+            ->where('disease_cd', $diseaseNameCd)
+            ->select('mapping_id', 'disease_cd', 'crop_name_cd', 'control_measure', 'control_measure_as')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'mapping_id' => $item->mapping_id,
+                    'disease_cd' => $item->disease_cd ?? '',
+                    'crop_name_cd' => $item->crop_name_cd ?? '',
+                    'control_measure' => $item->control_measure ?? '',
+                    'control_measure_as' => $item->control_measure_as ?? '',
+                ];
+            });
+
+        return response()->json($cropDisease);
+    }
+
+
+    public function update(Request $request)
+    {
+
+        //  dd($request);
+
+            $validated = $request->validate([
+                'mapping_id' => 'required|integer|exists:ag_crop_master_disease_n_crop_name_n_control_measure_mapping,mapping_id',
+                'control_measure' => 'required|string',
+                'control_measure_as' => 'nullable|string',
+                'crop_name_id' => 'required|exists:ag_crop_name_master,crop_name_cd',
+                'disease_id' => 'required|integer|exists:ag_crop_disease_master,disease_cd',
+            ]);
+
+
+            DB::table('ag_crop_master_disease_n_crop_name_n_control_measure_mapping')
+                ->where('mapping_id', $validated['mapping_id'])
+                ->update([
+                    'control_measure' => $validated['control_measure'],
+                    'control_measure_as' => $validated['control_measure_as'],
+                    'disease_cd' => $validated['disease_id'],
+                    'crop_name_cd' => $validated['crop_name_id'],
+                ]);
+
+            return redirect()->back()->with('success', 'Control measure updated successfully.');
+
+    }
+
+
+
+    public function destroy(Request $request)
+    {
+
+        $validated = $request->validate([
+            'mapping_id' => 'required|integer|exists:ag_crop_master_disease_n_crop_name_n_control_measure_mapping',
+        ]);
+
+        DB::table('ag_crop_master_disease_n_crop_name_n_control_measure_mapping')
+            ->where('mapping_id', $validated['mapping_id'])
+            ->delete();
+
+        return redirect()->back()->with('success', 'Control measure deleted successfully.');
+
+    }
+
+
+
+    public function create(Request $request)
+    {
+        try {
+            if ($request->isMethod('post')) {
+
+                $validated = $request->validate([
+                    'control_measure' => 'required|string|max:255',
+                    'control_measure_as' => 'required|string|max:255',
+                    'disease_cd' => 'required|integer|exists:ag_crop_disease_master,disease_cd',
+                    'crop_type_cd' => 'required|integer|exists:ag_crop_name_master,crop_type_cd',
+                    'crop_name_cd' => 'required|integer|exists:ag_crop_name_master,crop_name_cd',
+                ], [
+                    'crop_type_cd.required' => 'The crop type is required.',
+                    'crop_name_cd.required' => 'The crop name is required.',
+                    'disease_cd.required' => 'The disease is required.',
+                    'control_measure.required' => 'Control measure is required.',
+                    'control_measure_as.required' => 'Control measure assamese is required.',
+                ]);
+
+
+
+
+                $maxId = DB::table('ag_crop_master_disease_n_crop_name_n_control_measure_mapping')
+                    ->max('mapping_id');
+                $nextmaxid = $maxId ? $maxId + 1 : 1;
+
+
+                DB::table('ag_crop_master_disease_n_crop_name_n_control_measure_mapping')->insert([
+                    'mapping_id' => $nextmaxid,
+                    'control_measure' => $validated['control_measure'],
+                    'control_measure_as' => $validated['control_measure_as'],
+                    'crop_name_cd' => $validated['crop_name_cd'],
+                    'disease_cd' => $validated['disease_cd'],
+                ]);
+
+                return redirect()->route('admin.cropprotectiondetails')->with('success', 'Control measure added successfully.');
+            }
+        } catch (Exception $e) {
+            dd($e);
+        }
+
+            // Fetch crop types for the dropdown
+            $cropTypes = DB::table('ag_crop_type_master')->pluck('crop_type_desc', 'crop_type_cd');
+
+            // Handle displaying the form
+            return view('admin.cropprotectiondetails.createprotection', ['cropTypes' => $cropTypes]);
+
+    }
+
+}

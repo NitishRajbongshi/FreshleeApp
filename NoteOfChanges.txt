@@ -1,0 +1,59 @@
+11-Jan-2024
+===========
+1. app\Http\Controllers\Admin\DashboardController.php
+2. resources\views\admin\dashboard.blade.php
+Deployed on 11-Jan-2024
+
+
+12-Jan-2024
+===========
+1. resources\views\admin\common\sidebar.blade.php
+2. routes\web.php
+3. app\Http\Controllers\MIS\ReportController.php
+4. resources\views\admin\mis\misHomePage.blade.php
+5. resources\views\admin\common\layout.blade.php
+
+
+17-Jan-2024 (Map and Dashboard and Dataset Json)
+===========
+1. app\Http\Controllers\Admin\DatasetForDashboardController.php
+
+Oct to Nov (2024)-- Dipshikha
+=================
+1.Changed Login Layout
+2.Created update,delete, create functionality for symptom,control measure, crop variety, suitability, preparation, nurturing.
+3.Created functionality to assign role users.
+
+routes\web.php
+resources\views\admin\cropvarietydetails
+resources\views\admin\cropsymptomdetails
+resources\views\admin\cropprotectiondetails
+resources\views\admin\common\sidebar.blade.php
+resources\views\admin\common\navbar.blade.php
+resources\views\admin\appmaster
+resources\views\admin\allcropdetails
+app\Http\Controllers\ApplicationMaster
+app\Http\Controllers\Admin
+routes\web.php
+
+
+
+13-Nov-2024 -- Saiful
+=====================
+1. app\Http\Controllers\Admin\DashboardController.php
+
+09-Dec-2024 -- Saiful
+=====================
+1. app\Http\Controllers\ApplicationMaster\SymptomController.php
+2. resources\views\admin\appmaster\symptom.blade.php
+3. public\admin_assets\js\admin\cropSymptomsMaster.js
+4. resources\views\admin\common\layout.blade.php
+5. public\admin_assets\vendor\css\core.css
+6. resources\views\admin\dashboard.blade.php
+7. resources\views\admin\common\sidebar.blade.php
+8. resources\views\admin\common\navbar.blade.php
+9. resources\views\admin\appmaster\recommendation.blade.php
+10. app\Models\User.php
+11. app\Http\Controllers\Admin\AgriMedicianlProductController.php
+12. resources\views\admin\agriMedicinalProducts\medicinalProducts.blade.php
+13. resources\views\errors

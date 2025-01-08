@@ -1,0 +1,49 @@
+update ag_crop_master_disease_n_crop_name_n_control_measure_mapping set tech_key_words_and_codes ='{
+	"key_word_details" : [
+							{
+								"key_word" : "Copper Oxychloride",
+								"tech_code" : "TECBA-10",
+								"tech_name" : "Copper Oxychloride 50% WDG",
+								"trade_codes" : ["BA-49", "BA-47", "BA-48"],
+								"trade_names" : ["ACME-COP WDG","Topgun DF", "Blueget 727"]
+							}, 
+							{
+								"key_word" : "2-Bromo-2-nitropropane1",
+								"tech_code" : "TECBA-01",
+								"tech_name" : "2-Bromo-2-nitropropane1,3-diol (Bronopol)",
+								"trade_codes" : ["BA-01", "BA-04"],
+								"trade_names" : ["Bactrinashak", "Bactrimil"]
+							}, 
+							{
+								"key_word" : "Carbendazim",
+								"tech_code" : "TECBA-04",
+								"tech_name" : "Carbendazim 50% WP",
+								"trade_codes" : ["BA-30", "BA-32", "BA-33"],
+								"trade_names" : ["Goldstin","Falak", "Acmestin"]
+							}
+						],
+						
+	"key_word_details_as" : [
+							{
+								"key_word" : "Copper Oxychloride",
+								"tech_code" : "TECBA-10",
+								"tech_name" : "Copper Oxychloride 50% WDG",
+								"trade_codes" : ["BA-49", "BA-47", "BA-48"],
+								"trade_names" : ["ACME-COP WDG","Topgun DF", "Blueget 727"]
+							}, 
+							{
+								"key_word" : "2-Bromo-2-nitropropane1",
+								"tech_code" : "TECBA-01",
+								"tech_name" : "2-Bromo-2-nitropropane1,3-diol (Bronopol)",
+								"trade_codes" : ["BA-01", "BA-04"],
+								"trade_names" : ["Bactrinashak", "Bactrimil"]
+							}, 
+							{
+								"key_word" : "Carbendazim",
+								"tech_code" : "TECBA-04",
+								"tech_name" : "Carbendazim 50% WP",
+								"trade_codes" : ["BA-14", "BA-22", "BA-28"],
+								"trade_names" : ["Goldstin","Falak", "Acmestin"]
+							}
+						]						
+}' where mapping_id in (73,74,75,76,77,78,79,80,81);

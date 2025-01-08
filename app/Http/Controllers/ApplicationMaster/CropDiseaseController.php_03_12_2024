@@ -1,0 +1,110 @@
+<?php
+
+namespace App\Http\Controllers\ApplicationMaster;
+
+use App\Http\Controllers\Controller;
+use App\Models\Appmaster\CropDisease;
+use App\Models\Appmaster\CropType;
+use App\Models\Appmaster\CropName;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+
+class CropDiseaseController extends Controller
+{
+    public function index()
+    {
+        $data = DB::table('ag_crop_disease_master as u')
+        ->join('ag_crop_type_master as c', 'u.crop_type_cd', '=', 'c.crop_type_cd')
+        ->select('u.disease_cd', 'u.disease_name','u.crop_type_cd', 'u.disease_name_as', 'c.crop_type_desc as crop_type_desc', 'u.scientific_name', 'u.folder_name')
+        ->get();
+
+        $cropTypes = DB::table('ag_crop_type_master')->pluck('crop_type_desc', 'crop_type_cd');
+
+        return view('admin.appmaster.cropdisease', [
+            'data' => $data,
+            'cropTypes' => $cropTypes
+        ]);
+    }
+
+
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'disease_cd' => 'required|integer',
+            'disease_name' => 'required|string',
+            'disease_name_as' => 'nullable|string',
+            'crop_type_cd' => 'required|integer|exists:ag_crop_type_master,crop_type_cd',
+            'scientific_name' => 'nullable|string',
+            'folder_name' => 'nullable|string',
+        ], [
+            'crop_type_cd.required' => 'The crop type is required.',
+        ]);
+
+
+        DB::table('ag_crop_disease_master')
+            ->where('disease_cd', $validated['disease_cd'])
+            ->update([
+                'crop_type_cd' => $validated['crop_type_cd'],
+                'scientific_name' => $validated['scientific_name'],
+                'folder_name' => $validated['folder_name'],
+                'disease_name' => $validated['disease_name'],
+                'disease_name_as' => $validated['disease_name_as'],
+            ]);
+
+        return redirect()->route('admin.appmaster.cropdisease')->with('success', 'Crop disease updated successfully.');
+    }
+    public function create(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            // Validate the request
+            $validated = $request->validate([
+                'disease_name' => 'required|string|max:255',
+                'disease_name_as' => 'nullable|string|max:255',
+                'scientific_name' => 'nullable|string|max:255',
+                'folder_name' => 'nullable|string|max:255',
+                'crop_type_cd' => 'required|integer|exists:ag_crop_type_master,crop_type_cd',
+            ], [
+                'crop_type_cd.required' => 'The crop type is required.',
+            ]);
+
+
+
+            $maxId = DB::table('ag_crop_disease_master')
+                ->max('disease_cd');
+
+            $nextId = $maxId ? $maxId + 1 : 1; // Increment the highest ID or start at 1
+
+            // Insert the new crop information
+            DB::table('ag_crop_disease_master')->insert([
+                'disease_cd' => $nextId,
+                'disease_name' => $validated['disease_name'],
+                'disease_name_as' => $validated['disease_name_as'],
+                'scientific_name' => $validated['scientific_name'],
+                'folder_name' => $validated['folder_name'],
+                'crop_type_cd' => $validated['crop_type_cd'], // Add the crop type
+            ]);
+
+            return redirect()->route('admin.appmaster.cropdisease')->with('success', 'Crop disease created successfully.');
+        }
+
+        // Fetch crop types for the dropdown
+        $cropTypes = DB::table('ag_crop_type_master')->pluck('crop_type_desc', 'crop_type_cd');
+
+        // Handle displaying the form
+        return view('admin.appmaster.createcropdisease', ['cropTypes' => $cropTypes]);
+    }
+
+    public function destroy(Request $request)
+    {
+        $validated = $request->validate([
+            'disease_cd' => 'required|integer|exists:ag_crop_disease_master,disease_cd',
+        ]);
+
+        DB::table('ag_crop_disease_master')
+            ->where('disease_cd', $validated['disease_cd'])
+            ->delete();
+
+        return redirect()->route('admin.appmaster.cropdisease')->with('success', 'Disease deleted successfully.');
+    }
+}

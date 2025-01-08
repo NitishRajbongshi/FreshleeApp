@@ -1,0 +1,211 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class AllCropDetailsController extends Controller
+{
+    public function allcropdetails()
+    {
+        $cropTypes = DB::table('ag_crop_type_master')->pluck('crop_type_desc', 'crop_type_cd');
+        $cropNames = []; // Initialize empty array for crop names
+
+        return view('admin.allcropdetails.allcropdetails', [
+            'cropTypes' => $cropTypes,
+            'cropNames' => $cropNames // Pass empty crop names initially
+        ]);
+    }
+
+    public function getCropNames(Request $request)
+    {
+        $cropTypeCd = $request->input('crop_type_cd');
+        $cropNames = DB::table('ag_crop_name_master')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->pluck('crop_name_desc', 'crop_name_cd');
+
+        return response()->json($cropNames);
+    }
+
+    public function getSuitabilityDetails(Request $request)
+    {
+        $cropTypeCd = $request->input('crop_type_cd');
+        $cropNameCd = $request->input('crop_name_cd');
+
+        // Fetch suitability details from the table or return null if not found
+        $suitabilityDetails = DB::table('ag_crop_master_suitability')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->where('crop_name_cd', $cropNameCd)
+            ->first() ?? null;
+
+        // Fetch field preparation details or return null if not found
+        $fieldPreparationDetails = DB::table('ag_crop_master_field_preparation')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->where('crop_name_cd', $cropNameCd)
+            ->first() ?? null;
+
+        // Fetch nurturing details or return null if not found
+        $nurturingDetails = DB::table('ag_crop_master_crop_nurturing')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->where('crop_name_cd', $cropNameCd)
+            ->first() ?? null;
+
+        // Return all details in the response, even if some are null
+        return response()->json([
+            'suitability' => $suitabilityDetails,
+            'field_preparation' => $fieldPreparationDetails,
+            'nurturing' => $nurturingDetails,
+        ]);
+    }
+
+    public function saveSuitabilityDetails(Request $request)
+{
+    // Validate incoming request data
+    $validated = $request->validate([
+        // Suitability validation
+        'soil' => 'required|string|max:1000',
+        'soil_as' => 'nullable|string|max:1000',
+        'sowing_time' => 'nullable|string|max:1000',
+        'sowing_time_as' => 'nullable|string|max:1000',
+        'crop_type_cd' => 'required|string', // Ensure crop type is validated
+        'crop_name_cd' => 'required|string', // Ensure crop name is validated
+
+        // Preparation validation
+        'field_prep' => 'required|string|max:1000',
+        'field_prep_as' => 'nullable|string|max:1000',
+        'seed_treatment' => 'required|string|max:1000',
+        'seed_treatment_as' => 'nullable|string|max:1000',
+        'seed_rate' => 'required|string|max:1000',
+        'seed_rate_as' => 'nullable|string|max:1000',
+        'spacing' => 'required|string|max:1000',
+        'spacing_as' => 'nullable|string|max:1000',
+
+        // Nurturing validation
+        'irrigation' => 'required|string|max:1000',
+        'irrigation_as' => 'nullable|string|max:1000',
+        'weeding' => 'required|string|max:1000',
+        'weeding_as' => 'nullable|string|max:1000',
+        'precuations' => 'required|string|max:1000',
+        'precuations_as' => 'nullable|string|max:1000',
+    ]);
+
+    $cropTypeCd = $validated['crop_type_cd'];
+    $cropNameCd = $validated['crop_name_cd'];
+
+    // Check if a suitability record exists for the crop type and crop name
+    $existingSuitabilityRecord = DB::table('ag_crop_master_suitability')
+        ->where('crop_type_cd', $cropTypeCd)
+        ->where('crop_name_cd', $cropNameCd)
+        ->first();
+
+    if ($existingSuitabilityRecord) {
+        // Update existing suitability record
+        DB::table('ag_crop_master_suitability')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->where('crop_name_cd', $cropNameCd)
+            ->update([
+                'soil' => $validated['soil'],
+                'soil_as' => $validated['soil_as'],
+                'sowing_time' => $validated['sowing_time'],
+                'sowing_time_as' => $validated['sowing_time_as'],
+            ]);
+    } else {
+        // Insert new suitability record
+        $maxSuitabilityId = DB::table('ag_crop_master_suitability')->max('id');
+        $nextSuitabilityId = $maxSuitabilityId ? $maxSuitabilityId + 1 : 1;
+
+        DB::table('ag_crop_master_suitability')->insert([
+            'id' => $nextSuitabilityId,  // Manually setting the ID
+            'soil' => $validated['soil'],
+            'soil_as' => $validated['soil_as'],
+            'sowing_time' => $validated['sowing_time'],
+            'sowing_time_as' => $validated['sowing_time_as'],
+            'crop_type_cd' => $cropTypeCd,
+            'crop_name_cd' => $cropNameCd,
+        ]);
+    }
+
+    // Check if a preparation record exists for the crop type and crop name
+    $existingPreparationRecord = DB::table('ag_crop_master_field_preparation')
+        ->where('crop_type_cd', $cropTypeCd)
+        ->where('crop_name_cd', $cropNameCd)
+        ->first();
+
+    if ($existingPreparationRecord) {
+        // Update existing preparation record
+        DB::table('ag_crop_master_field_preparation')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->where('crop_name_cd', $cropNameCd)
+            ->update([
+                'field_prep' => $validated['field_prep'],
+                'field_prep_as' => $validated['field_prep_as'],
+                'seed_treatment' => $validated['seed_treatment'],
+                'seed_treatment_as' => $validated['seed_treatment_as'],
+                'seed_rate' => $validated['seed_rate'],
+                'seed_rate_as' => $validated['seed_rate_as'],
+                'spacing' => $validated['spacing'],
+                'spacing_as' => $validated['spacing_as'],
+            ]);
+    } else {
+        // Insert new preparation record
+        $maxPreparationId = DB::table('ag_crop_master_field_preparation')->max('id');
+        $nextPreparationId = $maxPreparationId ? $maxPreparationId + 1 : 1;
+
+        DB::table('ag_crop_master_field_preparation')->insert([
+            'id' => $nextPreparationId,
+            'field_prep' => $validated['field_prep'],
+            'field_prep_as' => $validated['field_prep_as'],
+            'seed_treatment' => $validated['seed_treatment'],
+            'seed_treatment_as' => $validated['seed_treatment_as'],
+            'seed_rate' => $validated['seed_rate'],
+            'seed_rate_as' => $validated['seed_rate_as'],
+            'spacing' => $validated['spacing'],
+            'spacing_as' => $validated['spacing_as'],
+            'crop_type_cd' => $cropTypeCd,
+            'crop_name_cd' => $cropNameCd,
+        ]);
+    }
+
+    // Check if a nurturing record exists for the crop type and crop name
+    $existingNurturingRecord = DB::table('ag_crop_master_crop_nurturing')
+        ->where('crop_type_cd', $cropTypeCd)
+        ->where('crop_name_cd', $cropNameCd)
+        ->first();
+
+    if ($existingNurturingRecord) {
+        // Update existing nurturing record
+        DB::table('ag_crop_master_crop_nurturing')
+            ->where('crop_type_cd', $cropTypeCd)
+            ->where('crop_name_cd', $cropNameCd)
+            ->update([
+                'irrigation' => $validated['irrigation'],
+                'irrigation_as' => $validated['irrigation_as'],
+                'weeding' => $validated['weeding'],
+                'weeding_as' => $validated['weeding_as'],
+                'precuations' => $validated['precuations'],
+                'precuations_as' => $validated['precuations_as'],
+            ]);
+    } else {
+        // Insert new nurturing record
+        $maxNurturingId = DB::table('ag_crop_master_crop_nurturing')->max('id');
+        $nextNurturingId = $maxNurturingId ? $maxNurturingId + 1 : 1;
+
+        DB::table('ag_crop_master_crop_nurturing')->insert([
+            'id' => $nextNurturingId,
+            'irrigation' => $validated['irrigation'],
+            'irrigation_as' => $validated['irrigation_as'],
+            'weeding' => $validated['weeding'],
+            'weeding_as' => $validated['weeding_as'],
+            'precuations' => $validated['precuations'],
+            'precuations_as' => $validated['precuations_as'],
+            'crop_type_cd' => $cropTypeCd,
+            'crop_name_cd' => $cropNameCd,
+        ]);
+    }
+
+    return redirect()->back()->with('success', 'All details are inserted successfully.');
+}
+
+}
