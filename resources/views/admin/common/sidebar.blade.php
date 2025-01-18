@@ -179,7 +179,7 @@
         </li>
 
         {{-- Farmers Inventory --}}
-        <li class="menu-item {{ Request::routeIs('farmer.stock') ? 'open' : '' }}">
+        {{-- <li class="menu-item {{ Request::routeIs('farmer.stock') ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-layer"></i>
                 <div data-i18n="Application-Master" style="font-size: 0.8rem;">Farmer's Inventory</div>
@@ -191,7 +191,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
 
         <!-- Verify Diagnosis -->
         <li class="menu-item {{ Request::routeIs('admin.reviewcropimage') ? 'active' : '' }}">

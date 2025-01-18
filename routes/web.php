@@ -35,35 +35,15 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\QueryHandler\QueryCategoryController;
 use App\Http\Controllers\QueryHandler\QueryController;
 use App\Http\Controllers\UtilsController;
-use App\Models\AgriNews\AgriNewsCategory;
 use App\Http\Controllers\MIS\ReportController;
-use App\Http\Controllers\Order\UserOrderController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-Route::get('/external_images/{path}', function ($path) {
 
-    $filePath = Storage::disk('external')->path($path);
-
-    if (!file_exists($filePath)) {
-        abort(404);
-    }
-
-    return response()->file($filePath);
-})->where('path', '.*');
-
-// Route::get('getencryptedpass/{pass}', [UtilsController::class, 'getEncryptedPassword'])->name('getencrypted.password');
+// Freshlee routes
 Route::get('', [AuthController::class, 'login'])->name('auth.login');
-Route::post('', [AuthController::class, 'loginUser'])->name('auth.login_post');
+Route::post('', [AuthController::class, 'generateOtp']);
+Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp'])->name('auth.verify');
+
+
 Route::get('logout', [AuthController::class, 'logoutUser'])->name('auth.logout');
 Route::post('attemptlogin', [UtilsController::class, 'attemptLogin'])->name('attemptLogin');
 Route::middleware('auth')->post('change-password', [AuthController::class, 'updatePassword'])->name('auth.update.password');
@@ -270,22 +250,8 @@ Route::group(['prefix' => 'agri-news', 'middleware' => 'auth'], function () {
 });
 
 //MIS Reports
-
 Route::get('misHomePage', [ReportController::class, 'index'])->name('misHomePage');
 Route::post('getMISReport', [ReportController::class, 'getMISReport'])->name('getMISReport');
-Route::get('/external_images/{path}', function ($path) {
-    // Use the 'external' disk to get the file path
-    $filePath = Storage::disk('external')->path($path);
-
-    // Check if the file exists
-    if (!file_exists($filePath)) {
-        abort(404);
-    }
-
-    // Return the file as a response
-    return response()->file($filePath);
-})->where('path', '.*');
-
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/agri-medicinal-products', [AgriMedicianlProductController::class, 'index'])->name('agri-medicinal-products');

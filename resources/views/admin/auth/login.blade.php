@@ -91,15 +91,18 @@
             outline: none;
         }
 
-        .login_email_input label,
-        .login_password_input label {
-            color: #fcfcfc;
+        .login_phone_input label {
+            color: #00885a;
             font-weight: 600;
         }
 
-        .login_email_input,
-        .login_password_input {
-            margin-bottom: 12px;
+        .login_phone_input {
+            margin-top: 30px;
+        }
+
+        .login_phone_input #phone,
+        .smallText {
+            color: #00885a;
         }
 
         .login_form .form-control {
@@ -136,28 +139,44 @@
         .login_form h5 {
             text-align: center;
             color: #00885a;
-            font-size: 30px;
+            font-size: 1.2rem;
             letter-spacing: 3px;
             font-weight: 600;
-            text-transform: uppercase;
+            text-transform: capitalize;
         }
     </style>
 </head>
 
 <body>
     <div class="login_form">
-        <h5>Login</h5>
+        <div class="text-center mb-2">
+            <img src="{{ asset('admin_assets\img\favicon\agri.png') }}" alt="Freshlee Logo" width="60rem"
+                height="auto">
+        </div>
+        <h5>Welcome to Freshlee</h5>
+        @if (session('error'))
+            <div id="successAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <form id="formAuthentication" class="mb-3" action="{{ route('auth.login') }}" method="POST">
             @csrf
-            <div class="login_email_input">
-                <label for="email" class="form-label">Email or Username</label>
-                <input type="text" class="form-control @error('email') is-invalid @enderror" id="email"
-                    name="email" placeholder="Enter Email ID" autofocus />
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
+            <div class="login_phone_input">
+                <label for="phone" class="form-label">
+                    <i class='bx bxs-phone-call'></i>
+                    Enter Registered Mobile No. :
+                </label>
+                <input type="tel" class="form-control" id="phone" name="phone" maxlength="10" minlength="10"
+                    pattern="[0-9]{10}" value="{{ old('phone') }}" placeholder="xxxxx xxxxx" autofocus />
+                @error('phone')
+                    <div class="text-xs text-danger"><i class='bx bxs-info-circle mr-1'></i> {{ $message }}</div>
                 @enderror
+                <small class="smallText my-2"><i class='bx bxs-info-circle mr-1'></i>An OTP will be sent to your mobile
+                    number.</small>
             </div>
-            <div class="login_password_input">
+            {{-- <div class="login_password_input">
                 <label class="form-label" for="password">Password</label>
                 <input type="password" id="password" class="form-control @error('password') is-invalid @enderror"
                     name="password" placeholder="Enter Password" aria-describedby="password" />
@@ -168,9 +187,9 @@
             <div class="show_password">
                 <input type="checkbox" id="showPasswordCheckbox" onchange="togglePasswordVisibility()">
                 Show Password
-            </div>
+            </div> --}}
             <div class="login_button">
-                <button class="btn login_button" type="submit">Login</button>
+                <button class="btn login_button" type="submit">Generate OTP</button>
             </div>
         </form>
     </div>
@@ -183,12 +202,16 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            function togglePasswordVisibility() {
-                var passwordInput = document.getElementById("password");
-                var showPasswordCheckbox = document.getElementById("showPasswordCheckbox");
-                passwordInput.type = showPasswordCheckbox.checked ? "text" : "password";
+            var successAlert = document.getElementById('successAlert');
+            if (successAlert) {
+                setTimeout(function() {
+                    successAlert.style.opacity = '0';
+                    successAlert.style.transition = 'opacity 0.5s ease-out';
+                    setTimeout(function() {
+                        successAlert.remove();
+                    }, 500);
+                }, 5000);
             }
-            document.getElementById("showPasswordCheckbox").addEventListener("change", togglePasswordVisibility);
         });
     </script>
 </body>

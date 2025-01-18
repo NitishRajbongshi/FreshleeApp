@@ -5,13 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserRoleMapping;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use App\Services\LoginService;
 
 class AuthController extends Controller
 {
+    protected $apiService;
+    public function __construct(LoginService $apiService)
+    {
+        $this->apiService = $apiService;
+    }
+
     private function getUserRole($userId)
     {
         $rolesmapping = UserRoleMapping::where('user_id', $userId)->orderby('role_id')->get();
@@ -49,40 +58,46 @@ class AuthController extends Controller
     }
 
 
-    public function loginUser(Request $request)
+    public function generateOtp(Request $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => 'required'
+        $validate = $request->validate([
+            'phone' => 'required',
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])) {
-            $request->session()->regenerate();
-            $main_role = $this->getUserRole(auth()->user()->user_id);
-            $userName = auth()->user()->name;
-            $request->session()->put('name', $userName);
-            $request->session()->put('current_role', $main_role);
-
-            if ($main_role == 'ADMIN')
-                return redirect()->route('admin.dashboard');
-            else if ($main_role == 'CM')
-                return redirect()->route('moderator.dashboard');
-            else if ($main_role == 'M')
-                return redirect()->route('moderator.dashboard');
-            else if ($main_role == 'AE')
-                return redirect()->route('agriexpert.dashboard');
-            else {
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                return back()->withErrors([
-                    'email' => 'You are not allowed to login without properly assigned role. Contact your administrator.',
-                ])->onlyInput('email');
+        try {
+            $phone = $request->phone;
+            $otpResponse = $this->apiService->generateOtp($phone);
+            if (isset($otpResponse['status']) && $otpResponse['status']) {
+                $otp = $otpResponse['otp'];
+                Session::put('otp', $otp);
+                Session::put('phone', $phone);
+                return view('admin.auth.verifyOtp');
+            } else {
+                throw new \Exception('Failed to send OTP. The API returned an error.');
             }
+        } catch (\Exception $exception) {
+            Log::error('OTP Generation Error:', ['error' => $exception->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to send OTP. Please try again later!'); // error message shown in view
         }
+    }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+    public function verifyOtp(Request $request)
+    {
+        try {
+            $otp = $request->first . $request->second . $request->third . $request->fourth;
+            $phoneNo = Session::get('phone');
+            $userValidation = $this->apiService->validateOtp($otp, $phoneNo);
+            // dd($userValidation);
+            $verificationStatus = $userValidation['status'];
+            if ($verificationStatus === "False") {
+                throw new \Exception($userValidation['msg']);
+            } else {
+                Log::info("varified");
+            }
+        } catch (\Exception $exception) {
+            Log::error('OTP Validation Error:', ['error' => $exception->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to Validate OTP!'); // error message shown in view
+        }
     }
 
     public function register(Request $request)
