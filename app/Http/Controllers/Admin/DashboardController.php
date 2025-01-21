@@ -16,9 +16,17 @@ use Exception;
 use Illuminate\Support\Facades\Http;
 use App\Models\FixedMasters\District;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
+    public function index()
+    {
+        // get session data
+        $userName = Session::get('name');
+        return view('dashboard', ['userName' => $userName]);
+    }
+
     public function dashboard()
     {
         try {
@@ -81,7 +89,6 @@ class DashboardController extends Controller
                 Log::info("last diagoned disease : " . $lastDiagnosedDiseaseName);
                 Log::info("last diagnosed disease location Name : " . $CityNameResponse);
                 Log::info("last diagnosed disease District  : " . $DistrictNameResponse);
-
             } catch (Exception $e) {
                 Log::error($e->getMessage());
                 Log::error($e->getCode());
@@ -238,7 +245,6 @@ class DashboardController extends Controller
                         $i = $j - 1;
                         break;
                     }
-
                 }
 
                 $districtWiseDiseaseWiseCountJson->district_cd = $old_dist_cd;
@@ -247,15 +253,12 @@ class DashboardController extends Controller
                 array_push($arrDiseaseDiagnosedCountDistrictWiseDiseaseWise, $districtWiseDiseaseWiseCountJson);
 
                 $arr_disg_dtls = array();
-
-
             }
             Log::info('xxx: ' . json_encode($arrDiseaseDiagnosedCountDistrictWiseDiseaseWise));
             return $arrDiseaseDiagnosedCountDistrictWiseDiseaseWise;
         } catch (Exception $e) {
             Log::error($e->getMessage());
         }
-
     }
     // public function getDiseaseWiseCountFromJsonDataSet()
     // {

@@ -86,13 +86,29 @@ class AuthController extends Controller
         try {
             $otp = $request->first . $request->second . $request->third . $request->fourth;
             $phoneNo = Session::get('phone');
-            $userValidation = $this->apiService->validateOtp($otp, $phoneNo);
-            // dd($userValidation);
-            $verificationStatus = $userValidation['status'];
+            $user = $this->apiService->validateOtp($otp, $phoneNo);
+            Log::info($user);
+            $verificationStatus = $user['status'];
             if ($verificationStatus === "False") {
-                throw new \Exception($userValidation['msg']);
+                throw new \Exception($user['msg']);
             } else {
-                Log::info("varified");
+                Log::info("varified user validation!");
+                Session::regenerate();
+                // store user information into session
+                $user_phone = $user['phone_no'];
+                $user_name = $user['user_full_name'];
+                $user_email = $user['email_id'];
+                $user_role = $user['user_roles'];
+                $user_address = $user['addresses'];
+                $user_kyc = $user['kyc'];
+                Session::put('name', $user_name);
+                Session::put('phone', $user_phone);
+                Session::put('email', $user_email);
+                Session::put('roles', $user_role);
+                Session::put('address', $user_address);
+                Session::put('kyc', $user_kyc);
+
+                return redirect()->route('dashboard');
             }
         } catch (\Exception $exception) {
             Log::error('OTP Validation Error:', ['error' => $exception->getMessage()]);

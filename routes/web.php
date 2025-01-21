@@ -43,6 +43,9 @@ Route::get('', [AuthController::class, 'login'])->name('auth.login');
 Route::post('', [AuthController::class, 'generateOtp']);
 Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp'])->name('auth.verify');
 
+// dashboard
+Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
 Route::get('logout', [AuthController::class, 'logoutUser'])->name('auth.logout');
 Route::post('attemptlogin', [UtilsController::class, 'attemptLogin'])->name('attemptLogin');
