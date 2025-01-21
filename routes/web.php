@@ -38,22 +38,23 @@ use App\Http\Controllers\UtilsController;
 use App\Http\Controllers\MIS\ReportController;
 use Illuminate\Support\Facades\Route;
 
-// Freshlee routes
+// Start of freshlee routes
+// user login
 Route::get('', [AuthController::class, 'login'])->name('auth.login');
 Route::post('', [AuthController::class, 'generateOtp']);
 Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp'])->name('auth.verify');
+Route::get('logout', [AuthController::class, 'logoutUser'])->name('auth.logout');
 
 // dashboard
-Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::group(['prefix' => 'user', 'middleware' => ['auth.user']], function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
+// End of freshlee routes
 
-Route::get('logout', [AuthController::class, 'logoutUser'])->name('auth.logout');
 Route::post('attemptlogin', [UtilsController::class, 'attemptLogin'])->name('attemptLogin');
 Route::middleware('auth')->post('change-password', [AuthController::class, 'updatePassword'])->name('auth.update.password');
 Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
-
-
-
 // Route::match(['get', 'post'], 'register', [AuthController::class, 'register'])->name('auth.register');
 
 // JSON Routes for admin dashboard
@@ -150,7 +151,7 @@ Route::group(['prefix' => 'master', 'middleware' => 'auth'], function () {
     Route::get('office', [OfficeController::class, 'index'])->name('admin.office');
     Route::post('office', [OfficeController::class, 'createOffice'])->name('admin.office_post');
     Route::post('office/edit', [OfficeController::class, 'editOffice'])->name('admin.office.edit');
-    
+
     // admin/user order
     Route::get("order/reports", [ItemReportController::class, 'index'])->name('admin.user.order');
     Route::post("order/delivery/update", [ItemReportController::class, 'updateDeliveryStatus'])->name('admin.order.delivery.update');
