@@ -24,6 +24,13 @@ class DashboardController extends Controller
     {
         // get session data
         $userName = Session::get('name');
+        $userRoles = Session::get('roles');
+        foreach ($userRoles as $role) {
+            if ($role == 'C') {
+                // $admin = true;
+                Log::info("Customer Role");
+            }
+        }
         return view('dashboard', ['userName' => $userName]);
     }
 

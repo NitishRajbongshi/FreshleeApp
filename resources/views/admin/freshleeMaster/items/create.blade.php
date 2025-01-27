@@ -17,7 +17,7 @@
             <h5 class="mb-0">Add Market Item</h5>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.freshlee.master.item.create') }}" method="POST" autocomplete="off"
+            <form action="{{ route('admin.master.item.create') }}" method="POST" autocomplete="off"
                 enctype="multipart/form-data">
                 @csrf
                 <div class="row">
@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
-                <a href="{{ route('admin.freshlee.master.item') }}" class="btn btn-warning">Cancel</a>
+                <a href="{{ route('admin.master.item') }}" class="btn btn-warning">Cancel</a>
             </form>
         </div>
     </div>

@@ -38,20 +38,20 @@
         </li> --}}
 
         {{-- Freshlee Master --}}
-        {{-- <li class="menu-item {{ Request::routeIs('admin.freshlee.master.item') ? 'open' : '' }}">
+        <li class="menu-item {{ Request::routeIs('admin.master.item') ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-layer"></i>
                 <div data-i18n="Application-Master" style="font-size: 0.8rem;">Freshlee Master</div>
             </a>
 
             <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('admin.freshlee.master.item') ? 'active' : '' }}">
-                    <a href="{{ route('admin.freshlee.master.item') }}" class="menu-link">
+                <li class="menu-item {{ Request::routeIs('admin.master.item') ? 'active' : '' }}">
+                    <a href="{{ route('admin.master.item') }}" class="menu-link">
                         <div data-i18n="Application-Master" style="font-size: 0.8rem;">Item Details</div>
                     </a>
                 </li>
             </ul>
-        </li> --}}
+        </li>
 
         {{-- Farmers Inventory --}}
         {{-- <li class="menu-item {{ Request::routeIs('farmer.stock') ? 'open' : '' }}">

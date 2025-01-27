@@ -50,6 +50,16 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth.user']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
+// admin routes
+Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']], function () {
+    // admin/freshlee-master
+    Route::get('master/item-details', [ItemController::class, 'index'])->name('admin.master.item');
+    Route::get('master/item/create', [ItemController::class, 'create'])->name('admin.master.item.create');
+    Route::post('master/item/create', [ItemController::class, 'store']);
+    Route::put('master/item/edit', [ItemController::class, 'update'])->name('admin.master.item.update');
+    Route::delete('master/items/delete', [ItemController::class, 'destroy'])->name('admin.master.item.destroy');
+    Route::get('master/items/image', [ItemController::class, 'getItemImage'])->name('admin.master.item.image');
+});
 // End of freshlee routes
 
 Route::post('attemptlogin', [UtilsController::class, 'attemptLogin'])->name('attemptLogin');
@@ -161,14 +171,6 @@ Route::group(['prefix' => 'master', 'middleware' => 'auth'], function () {
     Route::get('farmer/stock', [FarmerStockController::class, 'index'])->name('farmer.stock');
     Route::get('farmer/stock', [FarmerStockController::class, 'create'])->name("farmer.stock.create");
     Route::post('farmer/stock', [FarmerStockController::class, 'store']);
-
-    // admin/freshlee-master
-    Route::get('freshlee/master/items', [ItemController::class, 'index'])->name('admin.freshlee.master.item');
-    Route::get('freshlee/master/items/create', [ItemController::class, 'create'])->name('admin.freshlee.master.item.create');
-    Route::post('freshlee/master/items/create', [ItemController::class, 'store']);
-    Route::put('freshlee/master/items/edit', [ItemController::class, 'update'])->name('admin.freshlee.master.item.update');
-    Route::delete('freshlee/master/items/delete', [ItemController::class, 'destroy'])->name('admin.freshlee.master.item.destroy');
-    Route::get('freshlee/master/items/image', [ItemController::class, 'getItemImage'])->name('admin.freshlee.master.item.image');
 });
 
 

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
-class AuthUser
+class AuthAdmin
 {
     /**
      * Handle an incoming request.
@@ -18,20 +18,22 @@ class AuthUser
      */
     public function handle(Request $request, Closure $next)
     {
-        // Check if the user is authenticated
+        // Check if the user is authenticated and an admin 
         $user = Session::get('name');
-        $userPhone = Session::get('phone');
+        $userRoles = Session::get('roles');
         $authentication = Session::get('authentication');
-        Log::info("Authentication status: " . $authentication);
-        if (!$authentication || ($authentication === false)) {
+        if (!$authentication || !$user || !$userRoles || ($authentication === false)) {
             // Redirect to the login route if not authenticated or user_id is not set
             return redirect()->route('auth.login')->with('error', 'Login to continue!');
-        } else {
-            if (!$user || !$userPhone) {
-                // Redirect to the login route if not authenticated or user_id is not set
-                return redirect()->route('auth.login')->with('error', 'Login to continue!');
+        }
+        foreach ($userRoles as $role) {
+            if ($role == 'C') { // futher change the role for admin users
+                Log::info("The user has an administrator role!");
+                return $next($request);
+            } else {
+                Log::warning("The user does not have an administrator role!");
+                return redirect()->route('auth.login')->with('error', 'Unauthorized access!');
             }
-            return $next($request);
         }
     }
 }

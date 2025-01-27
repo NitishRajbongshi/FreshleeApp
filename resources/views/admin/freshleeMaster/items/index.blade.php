@@ -22,7 +22,7 @@
         <div class="d-flex align-items-center">
             <h5 class="card-header">Freshlee Market Item Information Management</h5>
             <div>
-                <a href="{{ route('admin.freshlee.master.item.create') }}" class="btn btn-outline-success">
+                <a href="{{ route('admin.master.item.create') }}" class="btn btn-outline-success">
                     <i class="tf-icons bx bx-plus-medical"></i>Add Item
                 </a>
             </div>
@@ -120,7 +120,7 @@
                     <h5 class="modal-title" id="editModalLabel"><i class='bx bxs-message-square-edit me-2'></i>Edit Item Information</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="editForm" method="POST" action="{{ route('admin.freshlee.master.item.update') }}"
+                <form id="editForm" method="POST" action="{{ route('admin.master.item.update') }}"
                     autocomplete="off" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -254,7 +254,7 @@
                 var figcaption = modalBody.find('.figcaption');
 
                 $.ajax({
-                    url: "{{ route('admin.freshlee.master.item.image') }}",
+                    url: "{{ route('admin.master.item.image') }}",
                     method: 'GET',
                     data: {
                         _token: '{{ csrf_token() }}',

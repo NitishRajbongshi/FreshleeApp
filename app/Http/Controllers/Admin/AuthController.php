@@ -90,6 +90,7 @@ class AuthController extends Controller
             Log::info($user);
             $verificationStatus = $user['status'];
             if ($verificationStatus === "False") {
+                Session::put('authentication', false);
                 throw new \Exception($user['msg']);
             } else {
                 Log::info("varified user validation!");
@@ -101,6 +102,7 @@ class AuthController extends Controller
                 $user_role = $user['user_roles'];
                 $user_address = $user['addresses'];
                 $user_kyc = $user['kyc'];
+                Session::put('authentication', true);
                 Session::put('name', $user_name);
                 Session::put('phone', $user_phone);
                 Session::put('email', $user_email);

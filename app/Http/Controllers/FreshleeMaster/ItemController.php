@@ -89,7 +89,7 @@ class ItemController extends Controller
                 ->where('item_name', $request->item_name)
                 ->first();
             if ($item) {
-                return redirect()->route('admin.freshlee.master.item.create')
+                return redirect()->route('admin.master.item.create')
                     ->with('error', 'Item name already exist.');
             }
 
@@ -124,11 +124,11 @@ class ItemController extends Controller
                         ]);
                         if ($insertStatus) {
                             DB::commit();
-                            return redirect()->route('admin.freshlee.master.item')
+                            return redirect()->route('admin.master.item')
                                 ->with('success', 'Item created successfully.');
                         } else {
                             DB::rollBack();
-                            return redirect()->route('admin.freshlee.master.item.create')
+                            return redirect()->route('admin.master.item.create')
                                 ->with('error', 'Failed to add item!');
                         }
                     } catch (\Exception $e) {
@@ -138,7 +138,7 @@ class ItemController extends Controller
                             'file' => $e->getFile(),
                             'line' => $e->getLine(),
                         ]);
-                        return redirect()->route('admin.freshlee.master.item.create')
+                        return redirect()->route('admin.master.item.create')
                             ->with('error', 'Internal Server Error!');
                     }
                 } catch (\Exception $e) {
@@ -147,12 +147,12 @@ class ItemController extends Controller
                         'file' => $e->getFile(),
                         'line' => $e->getLine(),
                     ]);
-                    return redirect()->route('admin.freshlee.master.item.create')
+                    return redirect()->route('admin.master.item.create')
                         ->with('error', 'Failed to store image!');
                 }
             } else {
                 DB::rollBack();
-                return redirect()->route('admin.freshlee.master.item.create')
+                return redirect()->route('admin.master.item.create')
                     ->with('error', 'Image not found!');
             }
         } catch (\Exception $e) {
@@ -167,6 +167,7 @@ class ItemController extends Controller
 
     public function update(Request $request)
     {
+        Log::info($request->all());
         DB::beginTransaction();
         try {
             $item = DB::table('smartag_market.tbl_item_master')
