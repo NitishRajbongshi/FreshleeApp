@@ -52,13 +52,21 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth.user']], function () {
 
 // admin routes
 Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']], function () {
-    // admin/freshlee-master
+    // admin/master
     Route::get('master/item-details', [ItemController::class, 'index'])->name('admin.master.item');
     Route::get('master/item/create', [ItemController::class, 'create'])->name('admin.master.item.create');
     Route::post('master/item/create', [ItemController::class, 'store']);
     Route::put('master/item/edit', [ItemController::class, 'update'])->name('admin.master.item.update');
     Route::delete('master/items/delete', [ItemController::class, 'destroy'])->name('admin.master.item.destroy');
     Route::get('master/items/image', [ItemController::class, 'getItemImage'])->name('admin.master.item.image');
+
+    // user/order
+    Route::get("order/reports", [ItemReportController::class, 'index'])->name('admin.user.order');
+    Route::post("order/delivery/update", [ItemReportController::class, 'updateDeliveryStatus'])->name('admin.order.delivery.update');
+    Route::post("order/history", [ItemReportController::class, 'history'])->name('admin.order.history');
+    Route::post('order/billing', [ItemReportController::class, 'billing'])->name('order.billing');
+    Route::post('order/delivered', [ItemReportController::class, 'markAsDelivered'])->name('order.delivered');
+
 });
 // End of freshlee routes
 
@@ -161,11 +169,6 @@ Route::group(['prefix' => 'master', 'middleware' => 'auth'], function () {
     Route::get('office', [OfficeController::class, 'index'])->name('admin.office');
     Route::post('office', [OfficeController::class, 'createOffice'])->name('admin.office_post');
     Route::post('office/edit', [OfficeController::class, 'editOffice'])->name('admin.office.edit');
-
-    // admin/user order
-    Route::get("order/reports", [ItemReportController::class, 'index'])->name('admin.user.order');
-    Route::post("order/delivery/update", [ItemReportController::class, 'updateDeliveryStatus'])->name('admin.order.delivery.update');
-    Route::post("order/history", [ItemReportController::class, 'history'])->name('admin.order.history');
 
     // handle farmer's avaiable
     Route::get('farmer/stock', [FarmerStockController::class, 'index'])->name('farmer.stock');

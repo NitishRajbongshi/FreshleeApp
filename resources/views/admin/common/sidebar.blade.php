@@ -4,7 +4,7 @@
             <span class="app-brand-logo demo">
                 {{-- Logo Here --}}
             </span>
-            <span class="app-brand-text demo menu-text fw-bolder my-2">Admin Control</span>
+            <span class="app-brand-text demo menu-text fw-bolder my-2 text-capitalize">Freshlee</span>
         </a>
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
             <i class="bx bx-chevron-left bx-sm align-middle"></i>
@@ -22,36 +22,44 @@
             </a>
         </li>
 
-        {{-- Freshlee Market --}}
-        {{-- <li class="menu-item {{ Request::routeIs('admin.user.order') ? 'open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-layer"></i>
-                <div data-i18n="Application-Master" style="font-size: 0.8rem;">Freshlee Market</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('admin.user.order') ? 'active' : '' }}">
-                    <a href="{{ route('admin.user.order') }}" class="menu-link">
-                        <div data-i18n="Application-Master" style="font-size: 0.8rem;">User Order Details</div>
-                    </a>
-                </li>
-            </ul>
-        </li> --}}
+        {{-- Only for Admin --}}
+        @if (session()->has('roles'))
+            @foreach (Session::get('roles') as $role)
+                @if ($role == 'C') 
+                    {{-- Freshlee Market --}}
+                    <li class="menu-item {{ Request::routeIs('admin.user.order') ? 'open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-layer"></i>
+                            <div data-i18n="Application-Master" style="font-size: 0.8rem;">Freshlee Market</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item {{ Request::routeIs('admin.user.order') ? 'active' : '' }}">
+                                <a href="{{ route('admin.user.order') }}" class="menu-link">
+                                    <div data-i18n="Application-Master" style="font-size: 0.8rem;">User Order Details
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
-        {{-- Freshlee Master --}}
-        <li class="menu-item {{ Request::routeIs('admin.master.item') ? 'open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-layer"></i>
-                <div data-i18n="Application-Master" style="font-size: 0.8rem;">Freshlee Master</div>
-            </a>
+                    {{-- Freshlee Master --}}
+                    <li class="menu-item {{ Request::routeIs('admin.master.item') ? 'open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-layer"></i>
+                            <div data-i18n="Application-Master" style="font-size: 0.8rem;">Freshlee Master</div>
+                        </a>
 
-            <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('admin.master.item') ? 'active' : '' }}">
-                    <a href="{{ route('admin.master.item') }}" class="menu-link">
-                        <div data-i18n="Application-Master" style="font-size: 0.8rem;">Item Details</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+                        <ul class="menu-sub">
+                            <li class="menu-item {{ Request::routeIs('admin.master.item') ? 'active' : '' }}">
+                                <a href="{{ route('admin.master.item') }}" class="menu-link">
+                                    <div data-i18n="Application-Master" style="font-size: 0.8rem;">Item Details</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
+            @endforeach
+        @endif
 
         {{-- Farmers Inventory --}}
         {{-- <li class="menu-item {{ Request::routeIs('farmer.stock') ? 'open' : '' }}">

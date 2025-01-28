@@ -166,7 +166,6 @@
     <script src="{{ asset('admin_assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ asset('admin_assets/vendor/js/menu.js') }}"></script>
     <script src="{{ asset('admin_assets/js/main.js') }}"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
             function OTPInput() {

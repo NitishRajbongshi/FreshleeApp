@@ -56,8 +56,8 @@
                 </div>
                 <form action="{{ route('admin.order.history') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="start_date" value="{{ $first }}">
-                    <input type="hidden" name="end_date" value="{{ $today }}">
+                    <input type="hidden" id="start_date" name="start_date" value="{{ $first }}">
+                    <input type="hidden" id="end_date" name="end_date" value="{{ $today }}">
                     <button type="submit" class="btn btn-md btn-outline-none text-danger text-decoration-underline">
                         Order History
                     </button>
@@ -75,6 +75,7 @@
                         <th>Ordered Date</th>
                         <th>Item + Quantity</th>
                         <th>Order Status</th>
+                        <th>Billing</th>
                         <th style="display: none;">Order Info</th>
                         <th>Delivery Status</th>
                     </tr>
@@ -98,15 +99,32 @@
                                     @foreach ($ordered_items as $ordered_item)
                                         <li>{{ $ordered_item['item_name'] }}:
                                             <span style="font-weight: bold;">{{ $ordered_item['item_quantity'] }}</span>
-                                            {{ $ordered_item['item_unit'] }}
+                                            {{ $ordered_item['qty_unit'] }}
                                         </li>
                                     @endforeach
                                 </ol>
                             </td>
                             <td style="overflow-wrap: break-word; white-space: normal;">
-                                {{ $item->is_delivered == 'Y' ? 'Delivered' : 'Pending' }}</td>
+                                {{ $item->is_delivered == 'Y' ? 'Delivered' : 'Pending' }}
+                            </td>
+                            <td>
+                                <form action="{{ route('order.billing') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="cust_id" value="{{ $item->cust_id }}" id="cust_id">
+                                    <input type="hidden" name="cust_name" value="{{ $item->full_name }}" id="cust_name">
+                                    <input type="hidden" name="cust_phone" value="{{ $item->phone_no }}" id="cust_phone">
+                                    <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
+                                        id="booking_id">
+                                    <input type="hidden" name="order_items" value="{{ $item->order_items }}"
+                                        id="order_items">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class='bx bx-add-to-queue'></i> Generate
+                                    </button>
+                                </form>
+                            </td>
                             <td style="display: none; overflow-wrap: break-word; white-space: normal;">
-                                {{ $item->booking_ref_no }}</td>
+                                {{ $item->booking_ref_no }}
+                            </td>
                             <td>
                                 <a href="#" class="btn btn-sm btn-outline-primary edit-btn" data-bs-toggle="modal"
                                     data-bs-target="#editModal" data-booking-id="{{ $item->booking_ref_no }}"
@@ -150,7 +168,8 @@
                             <td>{{ $serialNumber++ }}</td>
                             <td class="text-start">{{ $item->item_name }}</td>
                             <td>{{ $item->total_quantity }}</td>
-                            <td>{{ $item->unit_min_order_qty }}</td>
+                            <td>{{ $item->item_price_in }}</td>
+
                         </tr>
                     @endforeach
                 </tbody>
@@ -173,7 +192,7 @@
                         <div class="mb-3">
                             <p><strong>Customer:</strong> <span id="customer_name_edit" class="fw-bold"></span></p>
                         </div>
-                        <input type="hidden" name="user_id" id="userId" value="{{ $user->id }}">
+                        <input type="hidden" name="user_id" id="userId" value="{{ Session::get('phone') }}">
                         <input type="hidden" name="booking_ref_no" id="booking_ref_no" value="">
                         <div class="mb-3">
                             <label for="delivery_status" class="form-label fw-bold">Delivery Status</label>

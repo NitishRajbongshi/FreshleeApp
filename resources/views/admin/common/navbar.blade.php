@@ -11,7 +11,7 @@
         {{-- <div class="navbar-nav align-items-center"> --}}
         <div class="nav-item d-flex align-items-center justify-content-center pt-3">
             {{-- To be Updated --}}
-            <h3>SmartAg System
+            <h3>Freshlee
                 <sub class="text-danger" style="font-size:12px;">BETA</sub>
             </h3>
         </div>
