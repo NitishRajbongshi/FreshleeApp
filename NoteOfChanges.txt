@@ -1,3 +1,14 @@
 29-Jan-2025 - Nitish
 ===========
 1. Give the app a fresh version by removing the old code.
+2. Install DomPDF.
+
+Files: 
+modified:   composer.json
+modified:   composer.lock
+modified:   resources/views/admin/freshleeMarket/itemBill.blade.php
+modified:   routes/web.php
+
+app/Http/Controllers/Invoice/
+config/dompdf.php
+resources/views/invoice.blade.php

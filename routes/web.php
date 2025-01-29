@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\FreshleeMarket\ItemReportController;
 use App\Http\Controllers\FreshleeMaster\ItemController;
+use App\Http\Controllers\Invoice\InvoiceController;
 use App\Http\Controllers\UtilsController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,5 +40,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
     Route::post("order/history", [ItemReportController::class, 'history'])->name('admin.order.history');
     Route::post('order/billing', [ItemReportController::class, 'billing'])->name('order.billing');
     Route::post('order/delivered', [ItemReportController::class, 'markAsDelivered'])->name('order.delivered');
+    Route::post('order/invoice', [InvoiceController::class, 'generateInvoice'])->name('generate.invoice');
 });
+
 // End of freshlee routes

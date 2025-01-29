@@ -41,7 +41,8 @@
                             @foreach ($priceList as $item)
                                 <li class="list-group-item">
                                     <label>
-                                        <input type="checkbox" class="item-checkbox" data-item-cd="{{ $item['item_cd'] }}" data-name="{{ $item['item_name'] }}"
+                                        <input type="checkbox" class="item-checkbox" data-item-cd="{{ $item['item_cd'] }}"
+                                            data-name="{{ $item['item_name'] }}"
                                             data-quantity="{{ $item['item_quantity'] }}"
                                             data-qty-unit="{{ $item['qty_unit'] }}"
                                             data-price-per-kg="{{ $item['price_per_kg'] }}"
@@ -89,7 +90,18 @@
                     </tfoot>
                 </table>
             </div>
+            <form action="{{ route('generate.invoice') }}" method="POST" id="invoiceForm">
+                @csrf
+                <input type="hidden" name="booking_id" value="{{ $booking_id }}">
+                <input type="hidden" name="customer_name" value="{{ $cust_name }}">
+                <input type="hidden" name="total_amount" id="total_amount">
+                <div id="selectedItemsContainer"></div>
+                <div style="text-align: right;">
+                    <button type="submit" class="btn btn-warning mt-3">Download Invoice</button>
+                </div>
+            </form>
         </div>
+
     </div>
 @endsection
 
@@ -151,7 +163,7 @@
                     alert('Please select at least one item to mark as delivered.');
                     return;
                 }
-                const deliveryStatus= confirm('OK to continue');
+                const deliveryStatus = confirm('OK to continue');
                 if (!deliveryStatus) {
                     alert('Item not mark as delivered.');
                     return;
@@ -183,32 +195,33 @@
                 $('#totalPrice').text(totalPrice.toFixed(2));
             });
 
-            $('#editModal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var bookingID = button.data('booking-id');
-                var customerName = button.data('customer-name');
-                console.log(customerName);
+            $('#calculateBill').on('click', function() {
+                let selectedItemsContainer = $('#selectedItemsContainer');
+                selectedItemsContainer.empty(); // Clear previous inputs
 
-                // var email = button.data('email');
-                // var address = button.data('address');
-                // var roles = button.data('roles').split(',').map(role => role.trim());
+                let totalAmount = 0;
 
-                var modal = $(this);
-                modal.find('#book_id_edit').text(bookingID);
-                modal.find('#customer_name_edit').text(customerName);
-                // modal.find('#modalEmail').text(email);
-                // modal.find('#modalAddress').text(address);
+                $('.item-checkbox:checked').each(function() {
+                    let item_cd = $(this).data('item-cd');
+                    let name = $(this).data('name');
+                    let quantity = $(this).data('quantity');
+                    let qty_unit = $(this).data('qty-unit');
+                    let price_per_kg = $(this).data('price-per-kg');
+                    let total_price = $(this).data('total-price');
 
-                // // Ensure Role F is always checked
-                // modal.find('input[type="checkbox"]').prop('checked', false);
-                // modal.find('input[type="checkbox"][disabled]').prop('checked', true);
+                    totalAmount += parseFloat(total_price);
 
-                // roles.forEach(function(role) {
-                //     var checkbox = modal.find('#role_' + role);
-                //     if (checkbox.length) {
-                //         checkbox.prop('checked', true);
-                //     }
-                // });
+                    // Append hidden inputs to form
+                    selectedItemsContainer.append(`
+                    <input type="hidden" name="items[${item_cd}][name]" value="${name}">
+                    <input type="hidden" name="items[${item_cd}][quantity]" value="${quantity}">
+                    <input type="hidden" name="items[${item_cd}][qty_unit]" value="${qty_unit}">
+                    <input type="hidden" name="items[${item_cd}][price_per_kg]" value="${price_per_kg}">
+                    <input type="hidden" name="items[${item_cd}][total_price]" value="${total_price}">
+                `);
+                });
+
+                $('#total_amount').val(totalAmount.toFixed(2));
             });
         });
     </script>
