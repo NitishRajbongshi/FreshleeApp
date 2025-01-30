@@ -37,11 +37,11 @@
                 <div class="col-12 col-md-6 text-sm">
                     <h5 class="text-underline text-md">Ordered Item List</h5>
                     <form id="itemForm">
-                        <ul class="list-group" style="list-style-type: none;">
+                        <ul class="list-group" style="list-style-type: none;" id="item-list">
                             @foreach ($priceList as $item)
                                 <li class="list-group-item">
                                     <label>
-                                        <input type="checkbox" class="item-checkbox" data-item-cd="{{ $item['item_cd'] }}"
+                                        <input type="checkbox" class="item-checkbox" data-item-id="{{ $item['item_cd'] }}"
                                             data-name="{{ $item['item_name'] }}"
                                             data-quantity="{{ $item['item_quantity'] }}"
                                             data-qty-unit="{{ $item['qty_unit'] }}"
@@ -122,20 +122,40 @@
         });
 
         $(document).ready(function() {
+            // Calculate Bill Button Click Handler
             $('#calculateBill').on('click', function() {
+                updateBillTable();
+                createHiddenItemInputs();
+            });
+
+            // Mark Delivered Button Click Handler
+            $('#markDelivered').on('click', function() {
+                markItemsAsDelivered();
+            });
+
+            // Handle the invoice form submission
+            $('#invoiceForm').on('submit', function(e) {
+                e.preventDefault();
+                createHiddenItemInputs();
+                this.submit();
+            })
+
+            // Function to update bill table
+            function updateBillTable() {
                 let totalAmount = 0;
                 const billTableBody = $('#billTableBody');
-                billTableBody.empty(); // Clear previous entries
-                $('.item-checkbox:checked').each(function() {
-                    const name = $(this).data('name');
-                    const quantity = $(this).data('quantity');
-                    const qtyUnit = $(this).data('qty-unit');
-                    const pricePerKg = $(this).data('price-per-kg');
-                    const totalPrice = $(this).data('total-price');
+                billTableBody.empty();
+
+                $('#item-list input.item-checkbox:checked').each(function() {
+                    const $item = $(this);
+                    const name = $item.data('name');
+                    const quantity = $item.data('quantity');
+                    const qtyUnit = $item.data('qty-unit');
+                    const pricePerKg = $item.data('price-per-kg');
+                    const totalPrice = $item.data('total-price');
 
                     totalAmount += parseFloat(totalPrice);
 
-                    // Append row to the table
                     billTableBody.append(`
                         <tr class="text-center">
                             <td class="p-1 text-start">${name}</td>
@@ -146,28 +166,27 @@
                     `);
                 });
 
-                // Update total amount
                 $('#totalAmount').text(`Rs. ${totalAmount.toFixed(2)}`);
-                // Show the bill details section
-                $('#billDetails').removeClass('d-none');
-            });
+                $('#billDetails').removeClass('d-none').show();
+            }
 
-            // Mark as Delivered
-            $('#markDelivered').on('click', function() {
+            // Function to mark items as delivered
+            function markItemsAsDelivered() {
                 const selectedItems = [];
-                $('.item-checkbox:checked').each(function() {
-                    selectedItems.push($(this).data('item-cd'));
+                $('#item-list input.item-checkbox:checked').each(function() {
+                    selectedItems.push($(this).data('item-id'));
                 });
 
                 if (selectedItems.length === 0) {
                     alert('Please select at least one item to mark as delivered.');
                     return;
                 }
-                const deliveryStatus = confirm('OK to continue');
+                const deliveryStatus = confirm('OK to continue?');
                 if (!deliveryStatus) {
                     alert('Item not mark as delivered.');
                     return;
                 }
+
                 $.ajax({
                     url: "{{ route('order.delivered') }}",
                     method: "POST",
@@ -180,49 +199,44 @@
                     },
                     success: function(response) {
                         alert(response.message);
+                        location.reload();
                     },
-                    error: function(error) {
+                    error: function(xhr, status, error) {
                         alert('An error occurred. Please try again.');
+                        console.error(xhr.responseText); // Log error for debugging
                     }
                 });
-            });
+            }
 
-            $('#calculateBill').on('click', function() {
-                let totalPrice = 0;
-                $('.item-checkbox:checked').each(function() {
-                    totalPrice += parseFloat($(this).data('price'));
-                });
-                $('#totalPrice').text(totalPrice.toFixed(2));
-            });
 
-            $('#calculateBill').on('click', function() {
+            // Function to create hidden input fields
+            function createHiddenItemInputs() {
                 let selectedItemsContainer = $('#selectedItemsContainer');
                 selectedItemsContainer.empty(); // Clear previous inputs
-
                 let totalAmount = 0;
 
-                $('.item-checkbox:checked').each(function() {
-                    let item_cd = $(this).data('item-cd');
-                    let name = $(this).data('name');
-                    let quantity = $(this).data('quantity');
-                    let qty_unit = $(this).data('qty-unit');
-                    let price_per_kg = $(this).data('price-per-kg');
-                    let total_price = $(this).data('total-price');
+                $('#item-list input.item-checkbox:checked').each(function() {
+                    const $item = $(this);
+                    const itemId = $item.data('item-id');
+                    const name = $item.data('name');
+                    const quantity = $item.data('quantity');
+                    const qtyUnit = $item.data('qty-unit');
+                    const pricePerKg = $item.data('price-per-kg');
+                    const totalPrice = $item.data('total-price');
 
-                    totalAmount += parseFloat(total_price);
+                    totalAmount += parseFloat(totalPrice);
 
-                    // Append hidden inputs to form
                     selectedItemsContainer.append(`
-                    <input type="hidden" name="items[${item_cd}][name]" value="${name}">
-                    <input type="hidden" name="items[${item_cd}][quantity]" value="${quantity}">
-                    <input type="hidden" name="items[${item_cd}][qty_unit]" value="${qty_unit}">
-                    <input type="hidden" name="items[${item_cd}][price_per_kg]" value="${price_per_kg}">
-                    <input type="hidden" name="items[${item_cd}][total_price]" value="${total_price}">
-                `);
+                    <input type="hidden" name="items[${itemId}][name]" value="${name}">
+                    <input type="hidden" name="items[${itemId}][quantity]" value="${quantity}">
+                    <input type="hidden" name="items[${itemId}][qty_unit]" value="${qtyUnit}">
+                    <input type="hidden" name="items[${itemId}][price_per_kg]" value="${pricePerKg}">
+                    <input type="hidden" name="items[${itemId}][total_price]" value="${totalPrice}">
+                    `);
                 });
 
                 $('#total_amount').val(totalAmount.toFixed(2));
-            });
+            }
         });
     </script>
 @endsection
