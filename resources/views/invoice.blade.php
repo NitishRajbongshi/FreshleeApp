@@ -60,7 +60,7 @@
                 <tr>
                     <td>{{ $item['name'] }}</td>
                     <td>{{ $item['quantity'] }} {{ $item['qty_unit'] }}</td>
-                    <td>Rs. {{ number_format($item['price_per_kg'], 2) }} per {{ $item['qty_unit'] }}</td>
+                    <td>Rs. {{ number_format($item['price_per_kg'], 2) }} per {{ $item['price_unit'] }}</td>
                     <td>Rs. {{ number_format($item['total_price'], 2) }}</td>
                 </tr>
             @endforeach

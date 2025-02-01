@@ -46,7 +46,8 @@
                                             data-quantity="{{ $item['item_quantity'] }}"
                                             data-qty-unit="{{ $item['qty_unit'] }}"
                                             data-price-per-kg="{{ $item['price_per_kg'] }}"
-                                            data-total-price="{{ $item['total_price'] }}">
+                                            data-total-price="{{ $item['total_price'] }}"
+                                            data-price-unit="{{ $item['item_price_in_unit'] }}">
                                         {{ $item['item_name'] }} ({{ $item['item_quantity'] }} {{ $item['qty_unit'] }})
                                         - Price: Rs. {{ $item['total_price'] }}
                                     </label>
@@ -76,7 +77,7 @@
                         <tr class="text-center">
                             <th class="p-1 text-start">Item Name</th>
                             <th class="p-1 text-end pe-3">Quantity</th>
-                            <th class="p-1 text-end pe-3">Price Per Kg</th>
+                            <th class="p-1 text-end pe-3">Price</th>
                             <th class="p-1 text-end pe-3">Total Price</th>
                         </tr>
                     </thead>
@@ -152,6 +153,7 @@
                     const quantity = $item.data('quantity');
                     const qtyUnit = $item.data('qty-unit');
                     const pricePerKg = $item.data('price-per-kg');
+                    const priceUnit = $item.data('price-unit');
                     const totalPrice = $item.data('total-price');
 
                     totalAmount += parseFloat(totalPrice);
@@ -160,7 +162,7 @@
                         <tr class="text-center">
                             <td class="p-1 text-start">${name}</td>
                             <td class="p-1 text-end pe-3">${quantity} ${qtyUnit}</td>
-                            <td class="p-1 text-end pe-3">Rs. ${pricePerKg.toFixed(2)}</td>
+                            <td class="p-1 text-end pe-3">Rs. ${pricePerKg.toFixed(2)} per ${priceUnit}</td>
                             <td class="p-1 text-end pe-3">Rs. ${totalPrice.toFixed(2)}</td>
                         </tr>
                     `);
@@ -222,6 +224,7 @@
                     const quantity = $item.data('quantity');
                     const qtyUnit = $item.data('qty-unit');
                     const pricePerKg = $item.data('price-per-kg');
+                    const priceUnit = $item.data('price-unit');
                     const totalPrice = $item.data('total-price');
 
                     totalAmount += parseFloat(totalPrice);
@@ -231,6 +234,7 @@
                     <input type="hidden" name="items[${itemId}][quantity]" value="${quantity}">
                     <input type="hidden" name="items[${itemId}][qty_unit]" value="${qtyUnit}">
                     <input type="hidden" name="items[${itemId}][price_per_kg]" value="${pricePerKg}">
+                    <input type="hidden" name="items[${itemId}][price_unit]" value="${priceUnit}">
                     <input type="hidden" name="items[${itemId}][total_price]" value="${totalPrice}">
                     `);
                 });

@@ -114,6 +114,7 @@ class ItemReportController extends Controller
                     'item_cd', smartag_market.tbl_customer_booking_details.item_cd,
                     'item_name', smartag_market.tbl_item_master.item_name,
                     'item_unit', smartag_market.tbl_item_master.unit_min_order_qty,
+                    'item_price_in_unit', smartag_market.tbl_item_master.item_price_in,
                     'item_quantity', smartag_market.tbl_customer_booking_details.item_quantity,
                     'qty_unit', smartag_market.tbl_customer_booking_details.qty_unit
                 )
