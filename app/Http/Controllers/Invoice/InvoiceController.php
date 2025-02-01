@@ -49,7 +49,7 @@ class InvoiceController extends Controller
         }
     
         if ($number < 10) {
-            $words .= $units[$number];
+            $words .= $units[intval($number)];
         } elseif ($number < 20) {
             $words .= $teens[$number - 10];
         } elseif ($number < 100) {
