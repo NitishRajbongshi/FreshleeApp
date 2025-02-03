@@ -25,9 +25,10 @@
         {{-- Only for Admin --}}
         @if (session()->has('roles'))
             @foreach (Session::get('roles') as $role)
-                @if ($role == 'C') 
+                @if ($role == 'C')
                     {{-- Freshlee Market --}}
-                    <li class="menu-item {{ Request::routeIs('admin.user.order') ? 'open' : '' }}">
+                    <li
+                        class="menu-item {{ Request::routeIs('admin.user.order') || Request::routeIs('admin.proxy.order') ? 'open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-layer"></i>
                             <div data-i18n="Application-Master" style="font-size: 0.8rem;">Freshlee Market</div>
@@ -36,6 +37,12 @@
                             <li class="menu-item {{ Request::routeIs('admin.user.order') ? 'active' : '' }}">
                                 <a href="{{ route('admin.user.order') }}" class="menu-link">
                                     <div data-i18n="Application-Master" style="font-size: 0.8rem;">User Order Details
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('admin.proxy.order') ? 'active' : '' }}">
+                                <a href="{{ route('admin.proxy.order') }}" class="menu-link">
+                                    <div data-i18n="Application-Master" style="font-size: 0.8rem;">Proxy Order
                                     </div>
                                 </a>
                             </li>

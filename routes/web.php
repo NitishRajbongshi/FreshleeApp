@@ -43,8 +43,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
     Route::post('order/invoice', [InvoiceController::class, 'generateInvoice'])->name('generate.invoice');
 
     // Proxy order for users
-    Route::get('proxy/order', [ItemReportController::class, 'proxyOrder'])->name('admin.proxy.order');
-    Route::post('proxy/order', [ItemReportController::class, 'storeProxyOrder'])->name('admin.proxy.order.store');
+    Route::get('order/user-order', [ItemReportController::class, 'proxyOrder'])->name('admin.proxy.order');
+    Route::post('order/user-order', [ItemReportController::class, 'storeProxyOrder']);
 });
 
 // End of freshlee routes

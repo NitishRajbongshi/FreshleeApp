@@ -337,4 +337,8 @@ class ItemReportController extends Controller
 
         return response()->json(['message' => 'Selected items marked as delivered successfully.']);
     }
+
+    public function proxyOrder() {
+        dd('here');
+    }
 }

@@ -12,7 +12,7 @@
 
     <div class="card mb-2">
         <h5 class="card-header font-bold"><span class="underline">Default Pickup Address</span></h5>
-        <div class="card-body d-flex flex-wrap justify-content-between">
+        <div class="card-body d-flex flex-wrap justify-content-between lh-1">
             <div>
                 <p class="card-text">
                     Address 1:
@@ -44,7 +44,7 @@
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
             <h5>User Order Details
                 <br>
-                <span class="text-sm text-secondary">Listing all the items between <span class="text-primary">
+                <span class="text-xs text-secondary">Listing all the items between <span class="text-primary">
                         {{ $start }}</span> (Monday) to
                     <span class="text-primary">{{ $today }}</span> (Present Day).</span>
             </h5>
@@ -65,19 +65,17 @@
             </div>
         </div>
         <div class="table-responsive text-nowrap px-4 pb-2">
-            <table class="table" id="tblUser">
+            <table class="table text-xs" id="tblUser">
                 <thead>
                     <tr>
-                        <th>Sl. No.</th>
-                        <th>Customer Name</th>
-                        <th>Phone Number</th>
+                        <th>Customer Details</th>
                         <th>Customer Address</th>
                         <th>Ordered Date</th>
                         <th>Item + Quantity</th>
                         <th>Order Status</th>
                         <th>Billing</th>
                         <th style="display: none;">Order Info</th>
-                        <th>Delivery Status</th>
+                        {{-- <th>Delivery Status</th> --}}
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
@@ -86,9 +84,10 @@
                     @endphp
                     @foreach ($data as $index => $item)
                         <tr class="text-center">
-                            <td>{{ $serialNumber++ }}</td>
-                            <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->full_name }}</td>
-                            <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->phone_no }}</td>
+                            <td style="overflow-wrap: break-word; white-space: normal;">
+                                <span>{{ $item->full_name }}</span><br>
+                                <span>Ph: +91 {{ $item->phone_no }}</span>
+                            </td>
                             <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->address_line1 }}</td>
                             <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->order_date }}</td>
                             <td style="overflow-wrap: break-word; text-align: left;">
@@ -125,7 +124,7 @@
                             <td style="display: none; overflow-wrap: break-word; white-space: normal;">
                                 {{ $item->booking_ref_no }}
                             </td>
-                            <td>
+                            {{-- <td>
                                 <a href="#" class="btn btn-sm btn-outline-primary edit-btn" data-bs-toggle="modal"
                                     data-bs-target="#editModal" data-booking-id="{{ $item->booking_ref_no }}"
                                     data-customer-name="{{ $item->full_name }}"
@@ -133,7 +132,7 @@
                                     data-delivery-at="{{ $item->delivered_at != null ? $item->delivered_at : $today }}">
                                     <i class="tf-icons bx bx-edit"></i> Update
                                 </a>
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                 </tbody>
@@ -144,13 +143,13 @@
         <div id="report">
             <h5 class="card-header">
                 Item Report <br>
-                <span class="text-sm text-secondary">Listing all the ordered items between <span class="text-primary">
+                <span class="text-xs text-secondary">Listing all the ordered items between <span class="text-primary">
                         {{ $start }}</span> (Monday) to
                     <span class="text-primary">{{ $today }}</span> (Present Day).</span>
             </h5>
         </div>
         <div class="table-responsive text-nowrap px-4 pb-2">
-            <table class="table" id="itemsTable">
+            <table class="table text-xs" id="itemsTable">
                 <thead>
                     <tr class="text-center">
                         <th scope="col">SL. No.</th>
