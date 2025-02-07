@@ -17,8 +17,9 @@
     @endif
     <div class="card">
         <div class="">
-            <h5 class="card-header">
-                Hello {{$userName}}, <span class="text-sm">Welcome to Freshlee</span> 
+            <h5 class="card-header text-md">
+                Hello {{$userName}}, 
+                <span class="text-sm">Welcome to <span class="text-primary">Freshlee</span></span> 
             </h5>
         </div>
     @endsection

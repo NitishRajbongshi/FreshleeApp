@@ -10,24 +10,24 @@
         </div>
     @endif
 
-    <div class="card mb-2">
+    <div class="card mb-1">
         <div class="m-4">
             <div class="d-flex flex-wrap justify-content-between">
                 <div class="col-12 col-md-6 text-sm">
-                    <h5 class="text-underline text-md">Customer Details</h5>
-                    <p class="card-text">
+                    <h5 class="text-md">Customer Details</h5>
+                    <p class="card-text lh-1">
                         Booking ID:
                         <span class="text-secondary">
                             {{ $booking_id }}
                         </span>
                     </p>
-                    <p class="card-text">
+                    <p class="card-text lh-1">
                         Customer Name:
                         <span class="text-secondary">
                             {{ $cust_name }}
                         </span>
                     </p>
-                    <p class="card-text">
+                    <p class="card-text lh-1">
                         Customer Phone:
                         <span class="text-secondary">
                             +91 {{ $cust_phone }}
@@ -35,11 +35,11 @@
                     </p>
                 </div>
                 <div class="col-12 col-md-6 text-sm">
-                    <h5 class="text-underline text-md">Ordered Item List</h5>
+                    <h5 class="text-md">Ordered Item List</h5>
                     <form id="itemForm">
                         <ul class="list-group" style="list-style-type: none;" id="item-list">
                             @foreach ($priceList as $item)
-                                <li class="list-group-item">
+                                <li class="list-group-item lh-1">
                                     <label>
                                         <input type="checkbox" class="item-checkbox" data-item-id="{{ $item['item_cd'] }}"
                                             data-name="{{ $item['item_name'] }}"
@@ -55,24 +55,29 @@
                             @endforeach
                         </ul>
                         <div style="text-align: right;">
-                            <button type="button" class="my-2 btn btn-primary" id="calculateBill">Calculate Bill</button>
-                            <button type="button" id="markDelivered" class="my-2 btn btn-warning">Mark as
-                                Delivered</button>
+                            <button type="button" class="my-2 btn btn-sm btn-primary" id="calculateBill">
+                                Calculate Bill
+                            </button>
+                            <button type="button" id="markDelivered" class="my-2 btn btn-sm btn-warning">
+                                Mark As Delivered
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card my-2 d-none" id="billDetails">
+    <div class="card d-none" id="billDetails">
         <div class="m-4">
             <div>
                 <div class="mb-2 text-md">
-                    <span class="mr-2"><strong>Booking ID:</strong> {{ $booking_id }}</span>
+                    <span class="mr-2"><strong>Booking ID:</strong> 
+                        <span>{{ $booking_id }}</span>
+                    </span>
                     <span><strong>Customer Name:</strong> {{ $cust_name }}</span>
                 </div>
 
-                <table id="billTable" class="table table-striped table-bordered">
+                <table id="billTable" class="table table-striped table-bordered text-sm">
                     <thead>
                         <tr class="text-center">
                             <th class="p-1 text-start">Item Name</th>
@@ -98,7 +103,7 @@
                 <input type="hidden" name="total_amount" id="total_amount">
                 <div id="selectedItemsContainer"></div>
                 <div style="text-align: right;">
-                    <button type="submit" class="btn btn-warning mt-3">Download Invoice</button>
+                    <button type="submit" class="btn btn-sm btn-warning mt-3">Download Invoice</button>
                 </div>
             </form>
         </div>

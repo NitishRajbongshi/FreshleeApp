@@ -6,24 +6,17 @@
     <meta charset="utf-8" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-
     {{-- <title>@yield('title')</title> --}}
     <title>SmartAg System (BETA)</title>
-
     <meta name="description" content="" />
-
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('admin_assets/img/favicon/agri.ico') }}" />
-
     <script src="{{ asset('admin_assets/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('admin_assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('admin_assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ asset('admin_assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-
     <script src="{{ asset('admin_assets/vendor/js/menu.js') }}"></script>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.1.1/js/dataTables.buttons.min.js"></script>
@@ -65,7 +58,6 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('admin_assets/js/config.js') }}"></script>
-
     @yield('custom_header')
 </head>
 
@@ -111,22 +103,12 @@
         <div class="layout-overlay layout-menu-toggle"></div>
     </div>
     <!-- / Layout wrapper -->
-
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-
-    <!-- endbuild -->
-
     <!-- Vendors JS -->
     <script src="{{ asset('admin_assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
-
     <!-- Main JS -->
     <script src="{{ asset('admin_assets/js/main.js') }}"></script>
-
     <!-- Page JS -->
     <script src="{{ asset('admin_assets/js/dashboards-analytics.js') }}"></script>
-
-
     <script>
         $.ajaxSetup({
             headers: {
@@ -134,8 +116,6 @@
             }
         });
     </script>
-
-
     @yield('custom_js')
 </body>
 

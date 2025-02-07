@@ -20,26 +20,23 @@
     @endif
     <div class="card">
         <div class="d-flex align-items-center">
-            <h5 class="card-header">Freshlee Market Item Information Management</h5>
+            <h5 class="card-header text-md lh-1">Freshlee Market Item Information Management</h5>
             <div>
-                <a href="{{ route('admin.master.item.create') }}" class="btn btn-outline-success">
-                    <i class="tf-icons bx bx-plus-medical"></i>Add Item
+                <a href="{{ route('admin.master.item.create') }}" class="btn btn-sm btn-outline-success">
+                    <i class="tf-icons bx bx-plus-medical text-xs"></i>Add Item
                 </a>
             </div>
         </div>
-
-        <div class="table-responsive text-nowrap px-4">
-            <table class="table" id="tblUser" style="font-size: 0.8rem">
+        <div class="table-responsive text-nowrap px-4 pb-2">
+            <table class="table text-xs" id="tblUser">
                 <thead>
                     <tr>
-                        <th>Sl. No.</th>
                         <th>Item Name</th>
                         <th>Perishability</th>
                         <th>Category</th>
                         <th>Item Type</th>
                         <th>Farm Life</th>
                         <th>Min. Order</th>
-                        <th>Item Unit</th>
                         <th>Item Image</th>
                         <th>Actions</th>
                     </tr>
@@ -47,7 +44,6 @@
                 <tbody class="table-border-bottom-0">
                     @forelse ($marketItems as $index => $item)
                         <tr>
-                            <td style="text-align: center;">{{ $index + 1 }}</td>
                             <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->item_name }}</>
                             <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->perishability_descr }}
                             </td>
@@ -56,9 +52,7 @@
                             <td style="overflow-wrap: break-word; white-space: normal;text-align: center;">
                                 {{ $item->farm_life_in_days }}</td>
                             <td style="overflow-wrap: break-word; white-space: normal;text-align: center;">
-                                {{ $item->min_qty_to_order }}</td>
-                            <td style="overflow-wrap: break-word; white-space: normal;text-align: center;">
-                                {{ $item->unit_min_order_qty }}</td>
+                                {{ $item->min_qty_to_order }} {{ $item->unit_min_order_qty }}</td>
                             <td style="overflow-wrap: break-word; white-space: normal;text-align: center;">
                                 <a href="#" class="btn btn-sm btn-outline-primary edit-btn" data-bs-toggle="modal"
                                     data-bs-target="#imageModal" data-id="{{ $item->item_cd }}">
@@ -116,8 +110,8 @@
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel"><i class='bx bxs-message-square-edit me-2'></i>Edit Item Information</h5>
+                <div class="modal-header lh-1">
+                    <h5 class="modal-title" id="editModalLabel">Edit Item Information</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editForm" method="POST" action="{{ route('admin.master.item.update') }}"
@@ -126,17 +120,17 @@
                     @method('PUT')
                     <div class="modal-body d-flex flex-wrap">
                         <input type="hidden" name="item_cd" id="itemCd">
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="item_name" class="form-label">Item Name</label>
-                            <input type="text" class="form-control" id="item_name" name="item_name"
+                            <input type="text" class="form-control form-control-sm" id="item_name" name="item_name"
                                 placeholder=" Enter Item Name" required>
                             <div class="invalid-feedback item-name-feedback" style="display: none;">
                                 Please provide a Item Name.
                             </div>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="perishability_cd" class="form-label">Perishability</label>
-                            <select class="form-select" id="perishability_cd" name="perishability_cd" required>
+                            <select class="form-select form-select-sm" id="perishability_cd" name="perishability_cd" required>
                                 <option value="">Select Perishability</option>
                                 @foreach ($perishabilityTypes as $id => $desc)
                                     <option value="{{ $id }}">
@@ -145,9 +139,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="item_category_cd" class="form-label">Item Category</label>
-                            <select class="form-select" id="item_category_cd" name="item_category_cd" required>
+                            <select class="form-select form-select-sm" id="item_category_cd" name="item_category_cd" required>
                                 <option value="">Select Item Category</option>
                                 @foreach ($itemCategories as $id => $desc)
                                     <option value="{{ $id }}">
@@ -156,9 +150,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="product_type_cd" class="form-label">Product Type</label>
-                            <select class="form-select" id="product_type_cd" name="product_type_cd" required>
+                            <select class="form-select form-select-sm" id="product_type_cd" name="product_type_cd" required>
                                 <option value="">Select Product Type</option>
                                 @foreach ($productTypes as $id => $desc)
                                     <option value="{{ $id }}">
@@ -167,19 +161,19 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="farm_life" class="form-label">Farm Life</label>
-                            <input type="number" class="form-control" id="farm_life" name="farm_life"
+                            <input type="number" class="form-control form-control-sm" id="farm_life" name="farm_life"
                                 placeholder="Enter Farm Life" required>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="min_order" class="form-label">Min. Order</label>
-                            <input type="number" class="form-control" id="min_order" name="min_order"
+                            <input type="number" class="form-control form-control-sm" id="min_order" name="min_order"
                                 placeholder="Enter Min. Order" required>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="item_unit" class="form-label">Minimum Order Unit</label>
-                            <select class="form-select" id="item_unit" name="item_unit" required>
+                            <select class="form-select form-select-sm" id="item_unit" name="item_unit" required>
                                 <option value="">Select Item Unit</option>
                                 <option value="gm">GM</option>
                                 <option value="kg">KG</option>
@@ -188,15 +182,15 @@
                                 <option value="unit">Unit</option>
                             </select>
                         </div>
-                        <div class="mb-3 col-sm-12 col-md-6 px-2">
+                        <div class="mb-3 col-sm-12 col-md-4 px-2">
                             <label for="item_image" class="form-label">Item Image</label>
-                            <input type="file" class="form-control" id="item_image" name="item_image"
+                            <input type="file" class="form-control form-control-sm" id="item_image" name="item_image"
                                 accept="image/*">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Update</button>
-                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        <button type="button" class="btn btn-sm btn-warning" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
 

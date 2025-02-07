@@ -10,10 +10,10 @@
         </div>
     @endif
 
-    <div class="card mb-2">
-        <h5 class="card-header font-bold"><span class="underline">Default Pickup Address</span></h5>
-        <div class="card-body d-flex flex-wrap justify-content-between lh-1">
-            <div>
+    <div class="card">
+        <h5 class="card-header text-md lh-1"><span class="underline">Default Pickup Address</span></h5>
+        <div class="card-body d-flex flex-wrap justify-content-between text-sm">
+            <div style="line-height: 1px;">
                 <p class="card-text">
                     Address 1:
                     <span class="text-secondary">
@@ -26,7 +26,7 @@
                     </span>
                 </p>
             </div>
-            <div>
+            <div style="line-height: 1px;">
                 <p class="card-text">
                     Address 2:
                     <span class="text-secondary">{{ $picupAddress->address_line2 }}
@@ -40,9 +40,9 @@
             </div>
         </div>
     </div>
-    <div class="card my-2">
+    <div class="card my-1">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
-            <h5>User Order Details
+            <h5 class="text-md lh-1 ">User Order Details
                 <br>
                 <span class="text-xs text-secondary">Listing all the items between <span class="text-primary">
                         {{ $start }}</span> (Monday) to
@@ -50,7 +50,7 @@
             </h5>
             <div class="d-flex align-items-center">
                 <div>
-                    <a href="#report" class="text-decoration-underline">
+                    <a href="#report" class="text-decoration-underline text-xs">
                         Weekly Report
                     </a>
                 </div>
@@ -58,7 +58,7 @@
                     @csrf
                     <input type="hidden" id="start_date" name="start_date" value="{{ $first }}">
                     <input type="hidden" id="end_date" name="end_date" value="{{ $today }}">
-                    <button type="submit" class="btn btn-md btn-outline-none text-danger text-decoration-underline">
+                    <button type="submit" class="btn btn-md text-xs btn-outline-none text-danger text-decoration-underline">
                         Order History
                     </button>
                 </form>
@@ -69,12 +69,11 @@
                 <thead>
                     <tr>
                         <th>Customer Details</th>
-                        {{-- <th>Customer Address</th> --}}
                         <th>Ordered Date</th>
                         <th>Item + Quantity</th>
                         <th>Order Status</th>
                         <th>Customer Order</th>
-                        <th>Billing</th>
+                        <th class="text-center">Billing</th>
                         <th style="display: none;">Order Info</th>
                         {{-- <th>Delivery Status</th> --}}
                     </tr>
@@ -89,7 +88,6 @@
                                 <span>{{ $item->full_name }}</span><br>
                                 <span>Ph: +91 {{ $item->phone_no }}</span>
                             </td>
-                            {{-- <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->address_line1 }}</td> --}}
                             <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->order_date }}</td>
                             <td style="overflow-wrap: break-word; text-align: left;">
                                 <ol>
@@ -114,7 +112,7 @@
                                     <input type="hidden" name="cust_name" value="{{ $item->full_name }}" id="cust_id">
                                     <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
                                         id="booking_id">
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    <button type="submit" class="btn btn-xs py-1 btn-outline-primary">
                                         <i class='bx bx-pen'></i> Modify
                                     </button>
                                 </form>
@@ -129,7 +127,7 @@
                                         id="booking_id">
                                     <input type="hidden" name="order_items" value="{{ $item->order_items }}"
                                         id="order_items">
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    <button type="submit" class="btn btn-xs py-1 btn-outline-primary">
                                         <i class='bx bx-add-to-queue'></i> Generate
                                     </button>
                                 </form>
@@ -138,7 +136,7 @@
                                 {{ $item->booking_ref_no }}
                             </td>
                             {{-- <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary edit-btn" data-bs-toggle="modal"
+                                <a href="#" class="btn btn-xs py-1 btn-outline-primary edit-btn" data-bs-toggle="modal"
                                     data-bs-target="#editModal" data-booking-id="{{ $item->booking_ref_no }}"
                                     data-customer-name="{{ $item->full_name }}"
                                     data-delivery-status="{{ $item->is_delivered }}"
@@ -154,7 +152,7 @@
     </div>
     <div class="card">
         <div id="report">
-            <h5 class="card-header">
+            <h5 class="card-header text-md lh-1">
                 Item Report <br>
                 <span class="text-xs text-secondary">Listing all the ordered items between <span class="text-primary">
                         {{ $start }}</span> (Monday) to
@@ -199,22 +197,22 @@
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <p><strong>Book ID:</strong> <span id="book_id_edit" class="fw-bold"></span></p>
+                            <p><strong>Book ID:</strong> <span id="book_id_edit" class=""></span></p>
                         </div>
                         <div class="mb-3">
-                            <p><strong>Customer:</strong> <span id="customer_name_edit" class="fw-bold"></span></p>
+                            <p><strong>Customer:</strong> <span id="customer_name_edit" class=""></span></p>
                         </div>
                         <input type="hidden" name="user_id" id="userId" value="{{ Session::get('phone') }}">
                         <input type="hidden" name="booking_ref_no" id="booking_ref_no" value="">
                         <div class="mb-3">
-                            <label for="delivery_status" class="form-label fw-bold">Delivery Status</label>
+                            <label for="delivery_status" class="form-label ">Delivery Status</label>
                             <select class="form-select" name="delivery_status" id="delivery_status" required>
                                 <option value="Y">Delivered</option>
                                 <option value="N">Pending</option>
                             </select>
                         </div>
                         <div class="mb-3" style="display: none;" id="delivery_date">
-                            <label for="update_date" class="form-label fw-bold">Delivery Date</label>
+                            <label for="update_date" class="form-label ">Delivery Date</label>
                             <input class="form-control" type="date" name="update_date" id="update_date" required>
                         </div>
                     </div>

@@ -12,18 +12,18 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Add Market Item</h5>
+    <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between align-items-center lh-1">
+            <h5 class="text-md lh-1">Add Market Item</h5>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.master.item.create') }}" method="POST" autocomplete="off"
                 enctype="multipart/form-data">
                 @csrf
                 <div class="row">
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="item_name">Item Name</label>
-                        <input type="text" class="form-control @error('item_name') is-invalid @enderror" id="item_name"
+                        <input type="text" class="form-control form-control-sm @error('item_name') is-invalid @enderror" id="item_name"
                             name="item_name" placeholder="Item Name" value="{{ old('item_name') }}">
                         @error('item_name')
                             <div class="invalid-feedback">
@@ -31,9 +31,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="perishability_cd">Perishability Type</label>
-                        <select class="form-select @error('perishability_cd') is-invalid @enderror" id="perishability_cd"
+                        <select class="form-select form-select-sm @error('perishability_cd') is-invalid @enderror" id="perishability_cd"
                             name="perishability_cd">
                             <option value="">Select Perishability Type</option>
                             @foreach ($perishabilityType as $id => $desc)
@@ -48,9 +48,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="item_category_cd">Item Category</label>
-                        <select class="form-select @error('item_category_cd') is-invalid @enderror" id="item_category_cd"
+                        <select class="form-select form-select-sm @error('item_category_cd') is-invalid @enderror" id="item_category_cd"
                             name="item_category_cd">
                             <option value="">Select Item Category</option>
                             @foreach ($itemCategories as $id => $desc)
@@ -65,9 +65,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="product_type_cd">Product Type</label>
-                        <select class="form-select @error('product_type_cd') is-invalid @enderror" id="product_type_cd"
+                        <select class="form-select form-select-sm @error('product_type_cd') is-invalid @enderror" id="product_type_cd"
                             name="product_type_cd">
                             <option value="">Select Product Type</option>
                             @foreach ($productTypes as $id => $desc)
@@ -82,9 +82,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="farm_life_in_days">Farm Life (days)</label>
-                        <input type="number" class="form-control @error('farm_life_in_days') is-invalid @enderror"
+                        <input type="number" class="form-control form-control-sm @error('farm_life_in_days') is-invalid @enderror"
                             id="farm_life_in_days" name="farm_life_in_days" placeholder="Farm Life"
                             value="{{ old('farm_life_in_days') }}">
                         @error('farm_life_in_days')
@@ -93,9 +93,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="min_qty_to_order">Min Order Quantity</label>
-                        <input type="number" class="form-control @error('min_qty_to_order') is-invalid @enderror"
+                        <input type="number" class="form-control form-control-sm @error('min_qty_to_order') is-invalid @enderror"
                             id="min_qty_to_order" name="min_qty_to_order" placeholder="Min Order Quantity"
                             value="{{ old('min_qty_to_order') }}">
                         @error('min_qty_to_order')
@@ -104,9 +104,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="unit_min_order_qty">Minimum Order Unit</label>
-                        <select class="form-select @error('unit_min_order_qty') is-invalid @enderror"
+                        <select class="form-select form-select-sm @error('unit_min_order_qty') is-invalid @enderror"
                             id="unit_min_order_qty" name="unit_min_order_qty">
                             <option value="">Select Item Unit</option>
                             <option value="gm" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>GM</option>
@@ -121,9 +121,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
+                    <div class="mb-3 col-sm-12 col-md-4">
                         <label class="form-label" for="item_image">Item Image (jpg/ jpeg/ png)</label>
-                        <input type="file" class="form-control @error('item_image') is-invalid @enderror" id="item_image"
+                        <input type="file" class="form-control form-control-sm @error('item_image') is-invalid @enderror" id="item_image"
                             name="item_image" value="{{ old('item_image') }}">
                         @error('item_image')
                             <div class="invalid-feedback">
@@ -132,8 +132,8 @@
                         @enderror
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <a href="{{ route('admin.master.item') }}" class="btn btn-warning">Cancel</a>
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                <a href="{{ route('admin.master.item') }}" class="btn btn-sm btn-warning">Cancel</a>
             </form>
         </div>
     </div>
