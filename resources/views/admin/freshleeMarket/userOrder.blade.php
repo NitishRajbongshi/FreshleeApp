@@ -69,10 +69,11 @@
                 <thead>
                     <tr>
                         <th>Customer Details</th>
-                        <th>Customer Address</th>
+                        {{-- <th>Customer Address</th> --}}
                         <th>Ordered Date</th>
                         <th>Item + Quantity</th>
                         <th>Order Status</th>
+                        <th>Customer Order</th>
                         <th>Billing</th>
                         <th style="display: none;">Order Info</th>
                         {{-- <th>Delivery Status</th> --}}
@@ -88,7 +89,7 @@
                                 <span>{{ $item->full_name }}</span><br>
                                 <span>Ph: +91 {{ $item->phone_no }}</span>
                             </td>
-                            <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->address_line1 }}</td>
+                            {{-- <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->address_line1 }}</td> --}}
                             <td style="overflow-wrap: break-word; white-space: normal;">{{ $item->order_date }}</td>
                             <td style="overflow-wrap: break-word; text-align: left;">
                                 <ol>
@@ -105,6 +106,18 @@
                             </td>
                             <td style="overflow-wrap: break-word; white-space: normal;">
                                 {{ $item->is_delivered == 'Y' ? 'Delivered' : 'Pending' }}
+                            </td>
+                            <td>
+                                <form action="{{ route('admin.user.order.modify') }}" method="GET">
+                                    @csrf
+                                    <input type="hidden" name="cust_id" value="{{ $item->cust_id }}" id="cust_id">
+                                    <input type="hidden" name="cust_name" value="{{ $item->full_name }}" id="cust_id">
+                                    <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
+                                        id="booking_id">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class='bx bx-pen'></i> Modify
+                                    </button>
+                                </form>
                             </td>
                             <td>
                                 <form action="{{ route('order.billing') }}" method="POST">

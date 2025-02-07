@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\FreshleeMarket;
 
 use App\Http\Controllers\Controller;
+use App\Models\MasterItemUnit;
+use App\Models\Order\TblCustomerBookingDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -100,6 +102,12 @@ class ItemReportController extends Controller
                     '=',
                     'smartag_market.tbl_item_master.item_cd'
                 )
+                ->leftJoin(
+                    'smartag_market.master_item_units',
+                    'smartag_market.tbl_customer_booking_details.qty_unit',
+                    '=',
+                    'smartag_market.master_item_units.unit_cd'
+                )
                 ->select(
                     'smartag_market.tbl_customer_booking_details.cust_id',
                     DB::raw('DATE(smartag_market.tbl_customer_booking_details.order_date) as order_date'),
@@ -116,7 +124,8 @@ class ItemReportController extends Controller
                     'item_unit', smartag_market.tbl_item_master.unit_min_order_qty,
                     'item_price_in_unit', smartag_market.tbl_item_master.item_price_in,
                     'item_quantity', smartag_market.tbl_customer_booking_details.item_quantity,
-                    'qty_unit', smartag_market.tbl_customer_booking_details.qty_unit
+                    'qty_unit', smartag_market.master_item_units.unit_cd,
+                    'qty_unit_desc', smartag_market.master_item_units.unit_desc
                 )
             ) AS order_items")
                 )
@@ -291,7 +300,7 @@ class ItemReportController extends Controller
                     ->where('item_cd', $item['item_cd'])
                     ->value('actual_sale_price_per_1kg');
                 // Check if the quantity is in grams and convert it to kilograms if needed
-                $quantityInKg = ($item['qty_unit'] === 'gm')
+                $quantityInKg = ($item['qty_unit'] == 'gm')
                     ? $item['item_quantity'] / 1000
                     : $item['item_quantity'];
                 // Calculate total price
@@ -300,6 +309,7 @@ class ItemReportController extends Controller
                     'price_per_kg' => $itemPrice,
                     'total_price' => $totalPrice,
                 ]);
+                Log::info($priceList);
             }
             // dd($priceList);
             return view('admin.freshleeMarket.itemBill', [
@@ -338,7 +348,146 @@ class ItemReportController extends Controller
         return response()->json(['message' => 'Selected items marked as delivered successfully.']);
     }
 
-    public function proxyOrder() {
+    public function proxyOrder()
+    {
         dd('here');
+    }
+
+    public function modify(Request $request)
+    {
+        $user = Auth::user();
+        $customer_id = $request->cust_id;
+        $customer_name = $request->cust_name;
+        $booking_id = $request->booking_id;
+        $itemUnits = MasterItemUnit::all();
+        $items = DB::table("smartag_market.tbl_item_master")
+            ->select('item_cd', 'item_name')
+            ->orderBy('item_name', 'asc')->get();
+        $user_orders = DB::table('smartag_market.tbl_customer_booking_details as booking')
+            ->leftJoin('smartag_market.tbl_item_master as item', 'booking.item_cd', '=', 'item.item_cd')
+            ->leftJoin('smartag_market.master_item_units as unit', 'booking.qty_unit', '=', 'unit.unit_cd')
+            ->where('booking.cust_id', $customer_id)
+            ->where('booking.booking_ref_no', $booking_id)
+            ->select(
+                'booking.id',
+                'booking.cust_id',
+                'booking.booking_ref_no',
+                'booking.item_cd',
+                'item.item_name',
+                'booking.item_quantity',
+                'booking.qty_unit',
+                'unit.unit_desc'
+            )
+            ->get();
+        return view('admin.freshleeMarket.modifyOrder', [
+            'user' => $user,
+            'items' => $items,
+            'customer_id' => $customer_id,
+            'customer_name' => $customer_name,
+            'booking_id' => $booking_id,
+            'user_orders' => $user_orders,
+            'itemUnits' => $itemUnits,
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        Log::info('Request method: ' . $request->method());
+        $item_id = $request->item_id;
+        $item_cd = $request->item_cd;
+        $booking_id = $request->booking_id;
+        $item_quantity = $request->item_quantity;
+        $item_unit = $request->item_unit;
+        try {
+            $data = DB::table('smartag_market.tbl_customer_booking_details')
+                ->where('booking_ref_no', $booking_id)
+                ->where('id', $item_id)
+                ->update([
+                    'item_quantity' => $item_quantity,
+                    'qty_unit' => $item_unit,
+                ]);
+            return redirect()->back()->with('success', 'Order updated successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return view('errors.generic');
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'item_cd' => 'required',
+            'item_quantity' => 'required',
+            'qty_unit' => 'required',
+        ]);
+        try {
+            $booking_id = $request->booking_id;
+            $bookingDetails = DB::table("smartag_market.tbl_customer_booking_details")
+                ->where("booking_ref_no", $booking_id)
+                ->select('cust_id', 'order_date', 'zone_cd', 'is_delivered', 'delivery_address_cd', 'pin_code', 'status_cd', 'assigned_farmers_id', 'req_ack_no', 'is_harvested', 'delivered_by', 'delivered_at')
+                ->get()->first();
+            if ($bookingDetails) {
+                $data = [
+                    'cust_id' => $bookingDetails->cust_id,
+                    'order_date' => $bookingDetails->order_date,
+                    'booking_ref_no' => $booking_id,
+                    'zone_cd' => $bookingDetails->zone_cd,
+                    'is_delivered' => $bookingDetails->is_delivered,
+                    'delivery_address_cd' => $bookingDetails->delivery_address_cd,
+                    'pin_code' => $bookingDetails->pin_code,
+                    'status_cd' => $bookingDetails->status_cd,
+                    'item_cd' => $request->item_cd,
+                    'item_quantity' => $request->item_quantity,
+                    'assigned_farmers_id' => $bookingDetails->assigned_farmers_id,
+                    'req_ack_no' => $bookingDetails->req_ack_no,
+                    'is_harvested' => $bookingDetails->is_harvested,
+                    'delivered_by' => $bookingDetails->delivered_by,
+                    'delivered_at' => $bookingDetails->delivered_at,
+                    'qty_unit' => $request->qty_unit,
+                ];
+                // insert a new item in the same booking id
+                $insertStatus = DB::table("smartag_market.tbl_customer_booking_details")->insertGetId($data);
+                if ($insertStatus) {
+                    return redirect()->back()->with('success', 'New Item Added successfully.');
+                } else {
+                    return redirect()->back()->with('error', 'Failed to add item. Try again!');
+                }
+            } else {
+                return redirect()->back()->with('error', 'Failed to add item. Try again!');
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return view('errors.generic');
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        try {
+            if ($request->_token && $request->item_id) {
+                $item = DB::table("smartag_market.tbl_customer_booking_details")
+                    ->where('id', $request->item_id)
+                    ->delete();
+                if ($item) {
+                    return redirect()->back()->with('success', 'Item deleted seccessfully!');
+                } else {
+                    return redirect()->back()->with('success', 'Item failed to delete!');
+                }
+            } else {
+                return redirect()->back()->with('failed', 'Unauthorized access!');
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return view('errors.generic');
+        }
     }
 }

@@ -36,6 +36,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
 
     // user/order
     Route::get("order/reports", [ItemReportController::class, 'index'])->name('admin.user.order');
+    Route::get("order/modify-order", [ItemReportController::class, 'modify'])->name('admin.user.order.modify');
+    Route::post("order/update", [ItemReportController::class, 'update'])->name('admin.user.order.update');
+    Route::post("order/create", [ItemReportController::class, 'store'])->name('admin.user.order.create');
+    Route::delete("order/delete", [ItemReportController::class, 'destroy'])->name('admin.user.order.delete');
     Route::post("order/delivery/update", [ItemReportController::class, 'updateDeliveryStatus'])->name('admin.order.delivery.update');
     Route::post("order/history", [ItemReportController::class, 'history'])->name('admin.order.history');
     Route::post('order/billing', [ItemReportController::class, 'billing'])->name('order.billing');
