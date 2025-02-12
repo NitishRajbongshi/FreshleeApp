@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\FreshleeMarket\ItemReportController;
+use App\Http\Controllers\FreshleeMarket\ProxyOrderController;
 use App\Http\Controllers\FreshleeMaster\ItemController;
 use App\Http\Controllers\Invoice\InvoiceController;
 use App\Http\Controllers\UtilsController;
@@ -47,8 +48,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
     Route::post('order/invoice', [InvoiceController::class, 'generateInvoice'])->name('generate.invoice');
 
     // Proxy order for users
-    Route::get('order/user-order', [ItemReportController::class, 'proxyOrder'])->name('admin.proxy.order');
-    Route::post('order/user-order', [ItemReportController::class, 'storeProxyOrder']);
+    Route::get('order/user-list', [ProxyOrderController::class, 'index'])->name('admin.proxy.user.list');
+    Route::post('order/customer/address', [ProxyOrderController::class, 'getCustomerAddress'])->name('admin.customer.address');
+    Route::get('order/place-order', [ProxyOrderController::class, 'create'])->name('admin.place.order');
+    Route::post('order/place-order', [ProxyOrderController::class, 'store']);
 });
 
 // End of freshlee routes

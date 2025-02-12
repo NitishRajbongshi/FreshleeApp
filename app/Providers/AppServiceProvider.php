@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\LoginService;
+use App\Services\ProxyOrderService;
+use App\Services\UserService;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(LoginService::class);
+        $this->app->singleton(UserService::class);
+        $this->app->singleton(ProxyOrderService::class);
     }
 
     /**

@@ -28,7 +28,7 @@
                 @if ($role == 'C')
                     {{-- Freshlee Market --}}
                     <li
-                        class="menu-item {{ Request::routeIs('admin.user.order') || Request::routeIs('admin.proxy.order') ? 'open' : '' }}">
+                        class="menu-item {{ Request::routeIs('admin.user.order') || Request::routeIs('admin.proxy.user.list') ? 'open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link text-sm menu-toggle">
                             <i class='menu-icon tf-icons bx bx-store'></i>
                             <div data-i18n="Application-Master">Freshlee Market</div>
@@ -40,8 +40,8 @@
                                     </div>
                                 </a>
                             </li>
-                            <li class="menu-item {{ Request::routeIs('admin.proxy.order') ? 'active' : '' }}">
-                                <a href="{{ route('admin.proxy.order') }}" class="menu-link text-sm">
+                            <li class="menu-item {{ Request::routeIs('admin.proxy.user.list') ? 'active' : '' }}">
+                                <a href="{{ route('admin.proxy.user.list') }}" class="menu-link text-sm">
                                     <div data-i18n="Application-Master">Proxy Order
                                     </div>
                                 </a>
