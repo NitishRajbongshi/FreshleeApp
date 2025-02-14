@@ -41,13 +41,16 @@
                             <input type="hidden" id="input_addr_code" name="address" value="{{ $customer_address }}">
                             <input type="hidden" id="input_item_name" name="item_name" value="">
                             <input type="hidden" id="input_min_order" name="item_min_order" value="">
-                            <div class="mb-3 col-sm-12 col-md-7">
-                                <label class="form-label" for="item_cd">Item Description</label>
+                            <input type="hidden" id="input_min_qty" name="item_min_qty" value="">
+                            <input type="hidden" id="input_min_unit" name="item_min_unit" value="">
+                            <div class="mb-3 col-sm-12 col-md-6">
+                                <label class="form-label" for="item_cd">Items</label>
                                 <select class="form-select form-select-sm" id="item_cd" name="item_cd" required>
                                     <option value="">Select Item</option>
                                     @foreach ($items as $item)
                                         <option value="{{ $item['item_cd'] }}" data-name="{{ $item['item_name'] }}"
-                                            data-price="{{ $item['min_order_qty'] }}"
+                                            data-min_order_qty="{{ $item['min_order_qty'] }}"
+                                            data-min_qty="{{ $item['min_qty'] }}" data-min_unit="{{ $item['unit'] }}"
                                             {{ old('item_cd') == $item['item_cd'] ? 'selected' : '' }}>
                                             {{ $item['item_name'] }} (Min. Order: {{ $item['min_order_qty'] }})
                                         </option>
@@ -59,11 +62,28 @@
                                     </div>
                                 @enderror
                             </div>
-                            <div class="mb-3 col-sm-12 col-md-3">
-                                <label class="form-label" for="qty">Order Unit</label>
+                            <div class="mb-3 col-sm-12 col-md-2">
+                                <label class="form-label" for="qty">Qty</label>
                                 <input type="number" step="0.01" class="form-control form-control-sm" id="qty"
                                     name="qty" placeholder="0.00" value="{{ old('qty') }}" required>
                                 @error('qty')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="mb-3 col-sm-12 col-md-2">
+                                <label class="form-label" for="qty_unit">Unit</label>
+                                <select class="form-select form-select-sm" id="qty_unit" name="qty_unit" required>
+                                    <option value="">Select</option>
+                                    @foreach ($itemUnits as $unit)
+                                        <option value="{{ $unit->unit_cd }}"
+                                            {{ old('qty_unit') == $unit->unit_cd ? 'selected' : '' }}>
+                                            {{ $unit->unit_desc }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('qty_unit')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
@@ -79,12 +99,12 @@
                     @if (count($order_items) == 0)
                         <p class="text-info"><i class='bx bxs-sad'></i> Cart Is Empty!</p>
                     @else
-                        <p class="text-primary"><i class='bx bx-cart-download' ></i>User Cart</p>
+                        <p class="text-primary"><i class='bx bx-cart-download'></i>User Cart</p>
                         <ul class="list-group ps-2" style="list-style-type: none;" id="item-list">
                             @foreach ($order_items as $item)
                                 <li class="list-group-item lh-1">
                                     {{ $item['item_name'] }} (Min. Order: {{ $item['item_min_order'] }}) :
-                                    {{ $item['qty'] }} Unit(s)
+                                    {{ $item['item_qty'] }} {{ $item['item_unit'] }}
                                 </li>
                             @endforeach
                         </ul>
@@ -95,7 +115,8 @@
                                 <input type="hidden" id="cust_phone" name="phone" value="{{ $customer_phone }}">
                                 <input type="hidden" id="cust_pin" name="pin" value="{{ $customer_pin }}">
                                 <input type="hidden" id="cust_addr" name="address" value="{{ $customer_address }}">
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Click OK to confirm order')">Confirm Order</button>
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Click OK to confirm order')">Confirm Order</button>
                             </form>
                         </div>
                     @endif
@@ -129,9 +150,13 @@
             $('#item_cd').on('change', function(event) {
                 var item_cd = $('#item_cd').val();
                 var item_name = $('#item_cd option:selected').data('name');
-                var item_price = $('#item_cd option:selected').data('price');
+                var item_min_order_qty = $('#item_cd option:selected').data('min_order_qty');
+                var item_min_qty = $('#item_cd option:selected').data('min_qty');
+                var item_min_unit = $('#item_cd option:selected').data('min_unit');
                 $('#input_item_name').val(item_name);
-                $('#input_min_order').val(item_price);
+                $('#input_min_order').val(item_min_order_qty);
+                $('#input_min_qty').val(item_min_qty);
+                $('#input_min_unit').val(item_min_unit);
             })
         });
     </script>

@@ -27,7 +27,7 @@ class AuthAdmin
             return redirect()->route('auth.login')->with('error', 'Login to continue!');
         }
         foreach ($userRoles as $role) {
-            if ($role == 'C') { // futher change the role for admin users
+            if ($role == 'A') { // futher change the role for admin users
                 Log::info("The user has an administrator role!");
                 return $next($request);
             } else {

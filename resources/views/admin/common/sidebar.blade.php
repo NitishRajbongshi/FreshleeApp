@@ -25,7 +25,7 @@
         {{-- Only for Admin --}}
         @if (session()->has('roles'))
             @foreach (Session::get('roles') as $role)
-                @if ($role == 'C')
+                @if ($role == 'A')
                     {{-- Freshlee Market --}}
                     <li
                         class="menu-item {{ Request::routeIs('admin.user.order') || Request::routeIs('admin.proxy.user.list') ? 'open' : '' }}">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\FreshleeMarket;
 
 use App\Http\Controllers\Controller;
+use App\Models\MasterItemUnit;
 use App\Services\ProxyOrderService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -48,7 +49,9 @@ class ProxyOrderController extends Controller
 
     public function create(Request $request)
     {
+        Log::info($request->all());
         $user = Auth::user();
+        $itemUnits = MasterItemUnit::all();
         $customerName = $request->input('name');
         $customerPhone = $request->input('phone');
         $customerPin = $request->input('pin');
@@ -70,17 +73,34 @@ class ProxyOrderController extends Controller
             $item_cd = $request->input('item_cd');
             $item_name = $request->input('item_name');
             $item_min_order = $request->input('item_min_order');
+            $item_min_qty = $request->input('item_min_qty');
+            $item_min_unit = $request->input('item_min_unit');
             $item_qty = $request->input('qty');
-            $cart[] = [
-                'item_cd' => $item_cd,
-                'qty' => $item_qty
-            ];
+            $item_unit = $request->input('qty_unit');
+
             $userCart[] = [
                 'item_cd' => $item_cd,
                 'item_name' => $item_name,
                 'item_min_order' => $item_min_order,
-                'qty' => $item_qty
+                'item_qty' => $item_qty,
+                'item_unit' => $item_unit
             ];
+
+            // convert qty to API supported units 
+            if(($item_min_unit == 'kg') || ($item_min_unit == 'ltr')) {
+                $item_min_qty = $item_min_qty * 1000;
+            }
+            if(($item_unit == 'kg') || ($item_unit == 'ltr')) {
+                $item_qty = $item_qty * 1000;
+            }
+            $unit = $item_qty / $item_min_qty;
+            Log::info("unit: " . $unit);
+
+            $cart[] = [
+                'item_cd' => $item_cd,
+                'qty' => $unit
+            ];
+           
             Session::put('cart', $cart);
             Session::put('UserCart', $userCart);
         }
@@ -88,6 +108,7 @@ class ProxyOrderController extends Controller
         Log::info('User Cart:', ['cart' => $userCart]);
         return view('admin.proxyOrder.userCart', [
             'user' => $user,
+            'itemUnits' => $itemUnits,
             'customer_name' => $customerName,
             'customer_phone' => $customerPhone,
             'customer_pin' => $customerPin,

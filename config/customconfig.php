@@ -1,5 +1,7 @@
 <?php
 return [
+    // Production: 8082
+    // Development: 8084
     // API Credentials
     'UserName' => 'api_admin',
     'Password' => 'Pass@1234',

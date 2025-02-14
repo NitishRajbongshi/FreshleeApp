@@ -298,6 +298,7 @@ class ItemReportController extends Controller
                 // Fetch item price from the database
                 $itemPrice = DB::table('smartag_market.tbl_items_sale_price_for_customer_zone_wise')
                     ->where('item_cd', $item['item_cd'])
+                    ->orderBy('date_created', 'desc')
                     ->value('actual_sale_price_per_1kg');
                 // Check if the quantity is in grams and convert it to kilograms if needed
                 $quantityInKg = ($item['qty_unit'] == 'gm')

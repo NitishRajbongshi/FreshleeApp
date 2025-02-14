@@ -36,8 +36,8 @@
                     <ul class="list-group ps-2" style="list-style-type: none;" id="item-list">
                         @foreach ($orderedItems as $item)
                             <li class="list-group-item lh-1">
-                                {{ $item['item_name'] }} - Min. Order: {{ $item['item_min_order'] }} :
-                                {{ $item['qty'] }} Unit(s)
+                                {{ $item['item_name'] }} (Min. Order: {{ $item['item_min_order'] }}) :
+                                    {{ $item['item_qty'] }} {{ $item['item_unit'] }}
                             </li>
                         @endforeach
                     </ul>

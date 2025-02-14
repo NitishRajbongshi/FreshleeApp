@@ -27,9 +27,10 @@ class InvoiceController extends Controller
             'amountInWords' => $amountInWords
         ];
 
+        $custName = str_replace(' ', '_', strtolower($customerName));
         $pdf = Pdf::loadView('invoice', $data);
-
-        return $pdf->download("Invoice.pdf");
+        $fileName = 'Invoice_' . $custName . '.pdf'; 
+        return $pdf->download($fileName);
     }
 
     public function numberToWords($number) {

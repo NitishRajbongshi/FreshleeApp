@@ -64,7 +64,7 @@
                         @enderror
                     </div>
                     <div class="mb-3 col-sm-12 col-md-3">
-                        <label class="form-label" for="qty_unit">Item Category</label>
+                        <label class="form-label" for="qty_unit">Item Unit</label>
                         <select class="form-select form-select-sm" id="qty_unit" name="qty_unit" required>
                             <option value="">Select Unit</option>
                             @foreach ($itemUnits as $unit)

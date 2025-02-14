@@ -12,7 +12,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('admin_assets/img/favicon/agri.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('admin_assets/img/favicon/logo.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -126,7 +126,7 @@
             <div class="position-relative">
                 <div class="card text-center">
                     <div class="text-center mb-2">
-                        <img src="{{ asset('admin_assets\img\favicon\agri.png') }}" alt="Freshlee Logo" width="60rem"
+                        <img src="{{ asset('admin_assets\img\favicon\logo.png') }}" alt="Freshlee Logo" width="60rem"
                             height="auto">
                     </div>
                     <h6>Enter OTP</h6>
