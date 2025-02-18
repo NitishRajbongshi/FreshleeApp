@@ -41,11 +41,15 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-12 mb-1">
-                                <button type="submit" id="searchUser" class="btn btn-sm btn-primary">Get Customer Details
-                                </button>
-                                <img id="loader_gif" style="display:none;"
-                                    src="{{ asset('admin_assets\img\gif\loader.gif') }}" alt="loader" width="30px;">
+                            <div class="col-12 my-1">
+                                {{-- <a href="{{ route('admin.user.order') }}">
+                                    <button type="button" id="searchUser" class="btn btn-sm btn-primary">View All Orders
+                                    </button>
+                                </a> --}}
+                                <p id="loader_gif" style="display:none;">
+                                    <img src="{{ asset('admin_assets\img\gif\loader.gif') }}" alt="loader" width="30px;">
+                                    Getting user details
+                                </p>
                             </div>
                         </div>
                     </form>
@@ -118,9 +122,12 @@
         $(document).ready(function() {
             $('#tblUser').DataTable();
             $("#customer").select2();
+            $(document).on('select2:open', function(e) {
+                document.querySelector(`[aria-controls="select2-${e.target.id}-results"]`).focus();
+            });
 
             // get customer address 
-            $('#customerForm').on('submit', function(event) {
+            $('#customer').on('change', function(event) {
                 event.preventDefault(); // Prevent the default form submission
                 $("#loader_gif").show();
                 var customerPhone = $('#customer').val();

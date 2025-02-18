@@ -362,23 +362,26 @@ class ItemReportController extends Controller
         $booking_id = $request->booking_id;
         $itemUnits = MasterItemUnit::all();
         $items = DB::table("smartag_market.tbl_item_master")
-            ->select('item_cd', 'item_name')
+            ->select('item_cd', 'item_name', 'min_qty_to_order', 'unit_min_order_qty')
             ->orderBy('item_name', 'asc')->get();
         $user_orders = DB::table('smartag_market.tbl_customer_booking_details as booking')
-            ->leftJoin('smartag_market.tbl_item_master as item', 'booking.item_cd', '=', 'item.item_cd')
-            ->leftJoin('smartag_market.master_item_units as unit', 'booking.qty_unit', '=', 'unit.unit_cd')
-            ->where('booking.cust_id', $customer_id)
-            ->where('booking.booking_ref_no', $booking_id)
             ->select(
                 'booking.id',
                 'booking.cust_id',
                 'booking.booking_ref_no',
                 'booking.item_cd',
                 'item.item_name',
+                'item.min_qty_to_order',
+                'item.unit_min_order_qty',
                 'booking.item_quantity',
                 'booking.qty_unit',
                 'unit.unit_desc'
             )
+            ->leftJoin('smartag_market.tbl_item_master as item', 'booking.item_cd', '=', 'item.item_cd')
+            ->leftJoin('smartag_market.master_item_units as unit', 'booking.qty_unit', '=', 'unit.unit_cd')
+            ->where('booking.cust_id', $customer_id)
+            ->where('booking.booking_ref_no', $booking_id)
+            ->orderBy('item.item_name', 'asc')
             ->get();
         return view('admin.freshleeMarket.modifyOrder', [
             'user' => $user,

@@ -67,13 +67,13 @@
         <div class="table-responsive text-nowrap px-4 pb-2">
             <table class="table text-xs" id="tblUser">
                 <thead>
-                    <tr>
+                    <tr class="text-center">
                         <th>Customer Details</th>
                         <th>Ordered Date</th>
                         <th>Item + Quantity</th>
                         <th>Order Status</th>
                         <th>Customer Order</th>
-                        <th class="text-center">Billing</th>
+                        <th>Billing</th>
                         <th style="display: none;">Order Info</th>
                         {{-- <th>Delivery Status</th> --}}
                     </tr>
@@ -112,7 +112,7 @@
                                     <input type="hidden" name="cust_name" value="{{ $item->full_name }}" id="cust_id">
                                     <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
                                         id="booking_id">
-                                    <button type="submit" class="btn btn-xs py-1 btn-outline-primary">
+                                    <button type="submit" class="btn btn-xs btn-outline-primary" style="padding: 2px;">
                                         <i class='bx bx-pen'></i> Modify
                                     </button>
                                 </form>
@@ -127,7 +127,7 @@
                                         id="booking_id">
                                     <input type="hidden" name="order_items" value="{{ $item->order_items }}"
                                         id="order_items">
-                                    <button type="submit" class="btn btn-xs py-1 btn-outline-primary">
+                                    <button type="submit" class="btn btn-xs btn-outline-primary" style="padding: 2px;">
                                         <i class='bx bx-add-to-queue'></i> Generate
                                     </button>
                                 </form>
@@ -165,8 +165,7 @@
                     <tr class="text-center">
                         <th scope="col">SL. No.</th>
                         <th scope="col" class="text-start">ITEM NAME</th>
-                        <th scope="col">ITEM COUNT</th>
-                        <th scope="col">ITEM UNIT</th>
+                        <th scope="col" class="text-end">ITEM AMOUNT</th>
                     </tr>
                 </thead>
                 <tbody class="">
@@ -177,9 +176,7 @@
                         <tr class="text-center">
                             <td>{{ $serialNumber++ }}</td>
                             <td class="text-start">{{ $item->item_name }}</td>
-                            <td>{{ $item->total_quantity }}</td>
-                            <td>{{ $item->item_price_in }}</td>
-
+                            <td class="text-end">{{ $item->total_quantity }} {{ $item->item_price_in }}</td>
                         </tr>
                     @endforeach
                 </tbody>

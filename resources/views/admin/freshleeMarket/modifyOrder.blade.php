@@ -9,133 +9,147 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-
-    <div class="card mb-1">
-        <div class="card-body">
-            <h5 class="text-md lh-1">Modify User Order</h5>
-            <hr>
-            <div class="row justify-content-center lh-1">
-                <div class="col-12 col-md-8 text-sm">
-                    <p class="lh-sm">
-                        Booking ID: <span class="fw-bold bg-warning">{{ $booking_id }}</span><br>
-                        Customer Name: <span class="fw-bold text-md">{{ $customer_name }}</span>
-                    </p>
-                </div>
-                <div class="col-12 col-md-4 text-end">
-                    <button class="btn btn-sm btn-outline-success" id="add_btn">
-                        <i class="tf-icons bx bx-plus-medical me-1 text-xs"></i>Add New Item
-                    </button>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-4 mt-1">
+            <div class="card mb-1">
+                <div class="card-body">
+                    <h5 class="text-md lh-1">Modify User Order</h5>
+                    <div class="lh-1 text-sm">
+                        <p class="lh-sm">
+                            Customer: <span class="fw-bold text-md">{{ $customer_name }}</span><br>
+                            Booking ID: <span class="fw-bold">{{ $booking_id }}</span>
+                        </p>
+                        <div class="">
+                            <button class="btn btn-sm btn-primary" id="add_btn">
+                                <i class="tf-icons bx bx-plus-medical me-1 text-xs"></i>Add New Item
+                            </button>
+                            <a href="{{ route('admin.user.order') }}" class="text-xs text-primary">Back to order list</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="card mb-1" id="add_item_form" style="display: none;">
-        <div class="card-body lh-1">
-            <form action="{{ route('admin.user.order.create') }}" method="POST" autocomplete="off"
-                enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="booking_id" value="{{ $booking_id }}">
-                <div class="row">
-                    <div class="mb-3 col-sm-12 col-md-4">
-                        <label class="form-label" for="item_cd">Item Name</label>
-                        <select class="form-select form-select-sm" id="item_cd" name="item_cd" required>
-                            <option value="">Select Item</option>
-                            @foreach ($items as $item)
-                                <option value="{{ $item->item_cd }}"
-                                    {{ old('item_cd') == $item->item_cd ? 'selected' : '' }}>
-                                    {{ $item->item_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('item_cd')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="mb-3 col-sm-12 col-md-3">
-                        <label class="form-label" for="item_quantity">Item Quantity</label>
-                        <input type="number" step="0.01" class="form-control form-control-sm" id="item_quantity" name="item_quantity"
-                            placeholder="0.00" value="{{ old('item_quantity') }}" required>
-                        @error('item_quantity')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="mb-3 col-sm-12 col-md-3">
-                        <label class="form-label" for="qty_unit">Item Unit</label>
-                        <select class="form-select form-select-sm" id="qty_unit" name="qty_unit" required>
-                            <option value="">Select Unit</option>
-                            @foreach ($itemUnits as $unit)
-                                <option value="{{ $unit->unit_cd }}"
-                                    {{ old('qty_unit') == $unit->unit_cd ? 'selected' : '' }}>
-                                    {{ $unit->unit_desc }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('qty_unit')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="mb-3 col-sm-12 col-md-2 d-flex align-items-end justify-content-end">
-                        <button type="submit" class="btn btn-sm btn-primary">Add Item</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body text-sm">
-            @foreach ($user_orders as $order)
-                <div class="row align-items-center mb-2">
-                    <div class="col-12 col-md-6 d-flex align-items-center">
-                        <i class='bx bxs-circle text-sm me-2'></i>
-                        {{ $order->item_name }}
-                    </div>
-                    <div class="row col-12 col-md-6">
-                        <div class="col-10">
-                            <form action="{{ route('admin.user.order.update') }}" method="POST" id="update_order_table"
-                                class="d-flex gap-1">
-                                @csrf
-                                <input type="hidden" class="form-control form-control-sm" name="item_id" value="{{ $order->id }}">
-                                <input type="hidden" class="form-control form-control-sm" name="item_cd" value="{{ $order->item_cd }}">
-                                <input type="hidden" class="form-control form-control-sm" name="booking_id"
-                                    value="{{ $order->booking_ref_no }}">
-                                <input type="number" step="0.01" class="form-control form-control-sm" name="item_quantity"
-                                    value="{{ $order->item_quantity }}" required>
-                                <select class="form-select form-select-sm" id="item_unit" name="item_unit">
-                                    <option value="{{ $order->qty_unit }}" selected>{{ $order->unit_desc }}</option>
-                                    @foreach ($itemUnits as $unit)
-                                        @if ($order->qty_unit != $unit->unit_cd)
-                                            <option value="{{ $unit->unit_cd }}">
-                                                {{ $unit->unit_desc }}
-                                            </option>
-                                        @endif
+        <div class="col-12 col-md-8 mt-1">
+            <div class="card mb-1" id="add_item_form" style="display: none;">
+                <h5 class="card-header text-md">Available List of Items</h5>
+                <div class="card-body row px-4 pb-2 text-sm">
+                    <form action="{{ route('admin.user.order.create') }}" method="POST" autocomplete="off"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <input type="hidden" name="booking_id" value="{{ $booking_id }}">
+                            <div class="mb-3 col-sm-12 col-md-6">
+                                <label class="form-label" for="item_cd">Items</label><br>
+                                <select style="width: 100%;" class="form-select form-select-sm" id="item_cd"
+                                    name="item_cd" required>
+                                    <option value="">Select Item</option>
+                                    @foreach ($items as $item)
+                                        <option value="{{ $item->item_cd }}" data-unit="{{ $item->unit_min_order_qty }}"
+                                            {{ old('item_cd') == $item->item_cd ? 'selected' : '' }}>
+                                            {{ $item->item_name }} (Min. order: {{ $item->min_qty_to_order }}
+                                            {{ $item->unit_min_order_qty }})
+                                        </option>
                                     @endforeach
                                 </select>
-                                <button type="submit" class="submit btn btn-sm btn-primary"
-                                    data-id="{{ $order->item_cd }}">
-                                    <i class='bx bx-pen'></i>
-                                </button>
-                            </form>
+                                @error('item_cd')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="mb-3 col-sm-12 col-md-2">
+                                <label class="form-label" for="item_quantity">Quantity</label>
+                                <input type="number" step="0.01" class="form-control form-control-sm" id="item_quantity"
+                                    name="item_quantity" placeholder="0.00" value="{{ old('item_quantity') }}" required>
+                                @error('item_quantity')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="mb-3 col-sm-12 col-md-2">
+                                <label class="form-label" for="qty_unit">Unit</label>
+                                <select class="form-select form-select-sm" id="qty_unit" name="qty_unit" required>
+                                    <option value="">Select</option>
+                                    @foreach ($itemUnits as $unit)
+                                        <option value="{{ $unit->unit_cd }}" id="unit_{{ $unit->unit_cd }}"
+                                            style="display: none;"
+                                            {{ old('qty_unit') == $unit->unit_cd ? 'selected' : '' }}>
+                                            {{ $unit->unit_desc }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('qty_unit')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="mb-3 col-sm-12 col-md-2 d-flex align-items-end justify-content-end">
+                                <button type="submit" class="btn btn-sm btn-primary">Add Item</button>
+                            </div>
                         </div>
-                        <div class="col-2">
-                            <form action="{{ route('admin.user.order.delete') }}" method="post">
-                                @method('delete')
-                                @csrf
-                                <input type="hidden" name="item_id" value="{{ $order->id }}">
-                                <button type="submit" class="btn btn-sm btn-danger delete-btn"
-                                    onclick="return confirm('Are you sure!!')">
-                                    <i class='bx bx-trash'></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-            @endforeach
+            </div>
+            <div class="card">
+                <div class="card-body text-sm">
+                    <h5 class="text-md lh-1">Placed Orders
+                        <br>
+                        <span class="text-xs text-secondary">Showing all the items placed by the customer.</span>
+                    </h5>
+                    @foreach ($user_orders as $order)
+                        <div class="row align-items-center mb-2">
+                            <div class="col-12 col-md-6 d-flex align-items-center">
+                                <i class='bx bxs-circle text-sm me-2'></i>
+                                {{ $order->item_name }}
+                            </div>
+                            <div class="row col-12 col-md-6">
+                                <div class="col-10">
+                                    <form action="{{ route('admin.user.order.update') }}" method="POST"
+                                        id="update_order_table" class="d-flex gap-1">
+                                        @csrf
+                                        <input type="hidden" class="form-control form-control-sm" name="item_id"
+                                            value="{{ $order->id }}">
+                                        <input type="hidden" class="form-control form-control-sm" name="item_cd"
+                                            value="{{ $order->item_cd }}">
+                                        <input type="hidden" class="form-control form-control-sm" name="booking_id"
+                                            value="{{ $order->booking_ref_no }}">
+                                        <input type="number" step="0.01" class="form-control form-control-sm"
+                                            name="item_quantity" value="{{ $order->item_quantity }}" required>
+                                        <select class="form-select form-select-sm" id="item_unit" name="item_unit">
+                                            <option value="{{ $order->qty_unit }}" selected>{{ $order->unit_desc }}
+                                            </option>
+                                            @foreach ($itemUnits as $unit)
+                                                @if ($order->qty_unit != $unit->unit_cd)
+                                                    <option value="{{ $unit->unit_cd }}">
+                                                        {{ $unit->unit_desc }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="submit btn btn-sm btn-primary"
+                                            data-id="{{ $order->item_cd }}">
+                                            <i class='bx bx-pen'></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-2">
+                                    <form action="{{ route('admin.user.order.delete') }}" method="post">
+                                        @method('delete')
+                                        @csrf
+                                        <input type="hidden" name="item_id" value="{{ $order->id }}">
+                                        <button type="submit" class="btn btn-sm btn-danger delete-btn"
+                                            onclick="return confirm('Are you sure!!')">
+                                            <i class='bx bx-trash'></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -158,6 +172,26 @@
         $(document).ready(function() {
             $('#add_btn').on('click', function() {
                 $("#add_item_form").toggle();
+            })
+
+            $('#item_cd').select2();
+            $(document).on('select2:open', function(e) {
+                document.querySelector(`[aria-controls="select2-${e.target.id}-results"]`).focus();
+            });
+
+            $('#item_cd').on('change', function(event) {
+                event.preventDefault();
+                $("#qty_unit").val("");
+                $('#unit_kg, #unit_gm, #unit_ltr, #unit_ml, #unit_unit, #unit_mutha').hide();
+                var itemUnit = $.trim($('#item_cd').find(':selected').data('unit'));
+                console.log(itemUnit);
+                if (itemUnit == 'kg' || itemUnit == 'gm') {
+                    $('#unit_kg, #unit_gm').show();
+                } else if (itemUnit == 'ltr' || itemUnit == 'ml') {
+                    $('#unit_ltr, #unit_ml').show();
+                } else {
+                    $('#unit_unit, #unit_mutha').show();
+                }
             })
         })
 

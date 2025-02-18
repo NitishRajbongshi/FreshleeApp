@@ -14,21 +14,26 @@ class InvoiceController extends Controller
     {
         $bookingId = $request->input('booking_id');
         $customerName = $request->input('customer_name');
+        $customerPhone = $request->input('customer_phone');
         $selectedItems = $request->input('items', []);
         Log::info($selectedItems);
         $totalAmount = $request->input('total_amount');
         $amountInWords = $this->numberToWords($totalAmount);
+        // get logo from public folder
+        $logo = public_path('admin_assets/img/favicon/banner.png');
         $data = [
             'booking_id' => $bookingId,
             'date' => date('Y-m-d'),
             'customer_name' => $customerName,
+            'customer_phone' => $customerPhone,
             'items' => $selectedItems,
             'total_amount' => $totalAmount,
-            'amountInWords' => $amountInWords
+            'amountInWords' => $amountInWords,
+            'logo' => $logo
         ];
 
         $custName = str_replace(' ', '_', strtolower($customerName));
-        $pdf = Pdf::loadView('invoice', $data);
+        $pdf = Pdf::loadView('admin.freshleeMarket.invoice', $data);
         $fileName = 'Invoice_' . $custName . '.pdf'; 
         return $pdf->download($fileName);
     }

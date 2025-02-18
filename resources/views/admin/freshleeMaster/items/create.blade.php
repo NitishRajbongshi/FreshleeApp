@@ -109,9 +109,10 @@
                         <select class="form-select form-select-sm @error('unit_min_order_qty') is-invalid @enderror"
                             id="unit_min_order_qty" name="unit_min_order_qty">
                             <option value="">Select Item Unit</option>
-                            <option value="gm" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>GM</option>
-                            <option value="kg" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>KG</option>
-                            <option value="litre" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>Litre</option>
+                            <option value="gm" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>Gram</option>
+                            <option value="kg" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>Kilogram</option>
+                            <option value="ltr" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>Litre</option>
+                            <option value="ml" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>MiliLitre</option>
                             <option value="mutha" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>Mutha</option>
                             <option value="unit" {{ old('unit_min_order_qty') == $id ? 'selected' : '' }}>Unit</option>
                         </select>

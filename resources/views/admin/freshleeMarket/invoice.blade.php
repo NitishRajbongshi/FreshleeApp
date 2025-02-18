@@ -11,26 +11,24 @@
             padding: 20px;
         }
 
-        .header {
-            text-align: center;
-        }
-
-        .header p {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .invoice-table {
+        .invoice-table,
+        .cust_table {
             width: 100%;
             border-collapse: collapse;
         }
 
         .invoice-table th,
-        .invoice-table td {
+        .invoice-table td,
+        .cust_table td {
             border: 1px solid black;
             padding: 8px;
             text-align: left;
             font-size: 12px;
+        }
+
+        .cust_table td {
+            border: 1px solid white;
+            padding: 0;
         }
 
         .total-row {
@@ -40,12 +38,23 @@
 </head>
 
 <body>
-    <div class="header">
-        <h2>Freshlee</h2>
-        <p><strong>Customer Name:</strong> {{ $customer_name }}</p>
-        <p><strong>Booking ID:</strong> {{ $booking_id }}</p>
+    <div style="text-align: center; margin-bottom: 10px;">
+        <img src="{{ $logo }}" style="width: 150px; height: auto;">
     </div>
-
+    
+    <table class="cust_table" style="margin-bottom: 5px;">
+        <tbody>
+            <tr>
+                <td style="text-transform: uppercase;"><strong>{{ $customer_name }}</strong></td>
+                <td>Booking ID: <strong>{{ $booking_id }}</strong></td>
+            </tr>
+            <tr>
+                <td>Phone : +91 {{ $customer_phone }}</td>
+                <td>Date: {{ $date }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p style="font-size: 12px;">Delivery Address: Vidhi Analytica, House No. 15, Mother Teressa Road, Zoo Narengi Road, Guwahati, 781021</p>
     <table class="invoice-table">
         <thead>
             <tr>
@@ -71,8 +80,10 @@
         </tbody>
     </table>
     <h5>Total amount: <span style="text-transform: capitalize;">{{ $amountInWords }} Rupees only.</span></h5>
-    <p style="font-size: 12px; color: rgb(63, 62, 62);">Thank you for shopping with Freshlee! Visit Again.</p>
+    <p style="font-size: 13px; color: rgb(63, 62, 62);">For the farmers and with the farmers</p>
+    <p style="font-size: 12px; color: rgb(63, 62, 62);">With the commitment to sustainable agriculture- Team Vidhi</p>
     <p style="font-size: 12px; color: rgb(63, 62, 62);">Invoice Generated: {{ $date }}</p>
+    <p style="font-size: 12px; color: rgb(63, 62, 62); border-top: 1px solid gray; padding-top: 4px; text-align: center;">An initiative of Vidhi Agrotech Private Limited with the support from Vidhi Analytica LLP and EEL-NER under ICAR, Govt. of India.</p>
 </body>
 
 </html>

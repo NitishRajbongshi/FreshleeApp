@@ -37,6 +37,9 @@
                 <div class="col-12 col-md-6 text-sm">
                     <h5 class="text-md">Ordered Item List</h5>
                     <form id="itemForm">
+                        <div class="my-2 text-danger">
+                            <input type="checkbox" id="ckbCheckAll" /> Select all items
+                        </div>
                         <ul class="list-group" style="list-style-type: none;" id="item-list">
                             @foreach ($priceList as $item)
                                 <li class="list-group-item lh-1">
@@ -71,7 +74,7 @@
         <div class="m-4">
             <div>
                 <div class="mb-2 text-md">
-                    <span class="mr-2"><strong>Booking ID:</strong> 
+                    <span class="mr-2"><strong>Booking ID:</strong>
                         <span>{{ $booking_id }}</span>
                     </span>
                     <span><strong>Customer Name:</strong> {{ $cust_name }}</span>
@@ -100,6 +103,7 @@
                 @csrf
                 <input type="hidden" name="booking_id" value="{{ $booking_id }}">
                 <input type="hidden" name="customer_name" value="{{ $cust_name }}">
+                <input type="hidden" name="customer_phone" value="{{ $cust_phone }}">
                 <input type="hidden" name="total_amount" id="total_amount">
                 <div id="selectedItemsContainer"></div>
                 <div style="text-align: right;">
@@ -133,6 +137,23 @@
                 updateBillTable();
                 createHiddenItemInputs();
             });
+
+            // start - script to select all items
+            // When the "Select All" checkbox is clicked
+            $('#ckbCheckAll').click(function() {
+                // Check or uncheck all checkboxes with the class 'itemCheckbox'
+                $('.item-checkbox').prop('checked', this.checked);
+            });
+            // When any of the individual checkboxes are clicked
+            $('.item-checkbox').click(function() {
+                // If all individual checkboxes are checked, check the "Select All" checkbox
+                if ($('.item-checkbox:checked').length === $('.item-checkbox').length) {
+                    $('#ckbCheckAll').prop('checked', true);
+                } else {
+                    $('#ckbCheckAll').prop('checked', false);
+                }
+            });
+            // end
 
             // Mark Delivered Button Click Handler
             $('#markDelivered').on('click', function() {

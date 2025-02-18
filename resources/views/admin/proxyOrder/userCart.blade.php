@@ -77,7 +77,8 @@
                                 <select class="form-select form-select-sm" id="qty_unit" name="qty_unit" required>
                                     <option value="">Select</option>
                                     @foreach ($itemUnits as $unit)
-                                        <option value="{{ $unit->unit_cd }}"
+                                        <option value="{{ $unit->unit_cd }}" id="unit_{{ $unit->unit_cd }}"
+                                            style="display: none;"
                                             {{ old('qty_unit') == $unit->unit_cd ? 'selected' : '' }}>
                                             {{ $unit->unit_desc }}
                                         </option>
@@ -146,7 +147,9 @@
         $(document).ready(function() {
             $('#tblUser').DataTable();
             $("#item_cd").select2();
-
+            $(document).on('select2:open', function(e) {
+                document.querySelector(`[aria-controls="select2-${e.target.id}-results"]`).focus();
+            });
             $('#item_cd').on('change', function(event) {
                 var item_cd = $('#item_cd').val();
                 var item_name = $('#item_cd option:selected').data('name');
@@ -157,6 +160,17 @@
                 $('#input_min_order').val(item_min_order_qty);
                 $('#input_min_qty').val(item_min_qty);
                 $('#input_min_unit').val(item_min_unit);
+
+                $("#qty_unit").val("");
+                $('#unit_kg, #unit_gm, #unit_ltr, #unit_ml, #unit_unit, #unit_mutha').hide();
+                console.log(item_min_unit);
+                if (item_min_unit == 'kg' || item_min_unit == 'gm') {
+                    $('#unit_kg, #unit_gm').show();
+                } else if (item_min_unit == 'ltr' || item_min_unit == 'ml') {
+                    $('#unit_ltr, #unit_ml').show();
+                } else {
+                    $('#unit_unit, #unit_mutha').show();
+                }
             })
         });
     </script>
