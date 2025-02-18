@@ -11,12 +11,12 @@
                     <div class="col-12 col-md-3">
                         <label for="start_date" class="form-label">Start Date</label>
                         <input class="form-control form-control-sm" type="date" name="start_date"
-                            value="{{ $first }}">
+                            value="{{ $first ?? '' }}">
                     </div>
                     <div class="col-12 col-md-3">
                         <label for="end_date" class="form-label">End Date</label>
                         <input class="form-control form-control-sm" type="date" name="end_date"
-                            value="{{ $today }}">
+                            value="{{ $today ?? '' }}">
                     </div>
                     <div class="col-12 col-md-3">
                         <button type="submit" class="btn btn-sm btn-primary">View History</button>
@@ -31,8 +31,8 @@
             <h5 class="text-md lh-1">User Order History
                 <br>
                 <span class="text-xs text-secondary">Showing results between <span class="text-primary">
-                        {{ $first }}</span> to
-                    <span class="text-primary">{{ $today }}</span>.</span>
+                        {{ $first ?? '' }}</span> to
+                    <span class="text-primary">{{ $today ?? '' }}</span>.</span>
             </h5>
         </div>
         <div class="table-responsive text-nowrap px-4 pb-2">

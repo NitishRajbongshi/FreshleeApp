@@ -17,24 +17,27 @@
                 <p class="card-text">
                     Address 1:
                     <span class="text-secondary">
-                        {{ $picupAddress->address_line1 }}
+                        {{ isset($picupAddress) && is_object($picupAddress) ? $picupAddress->address_line1 : 'N/A' }}
                     </span>
                 </p>
                 <p class="card-text">
                     State:
-                    <span class="text-secondary">{{ $picupAddress->state_cd == 'AS' ? 'Assam' : 'NA' }}
+                    <span class="text-secondary">
+                        {{ isset($picupAddress) && is_object($picupAddress) && $picupAddress->state_cd == 'AS' ? 'Assam' : 'NA' }}
                     </span>
                 </p>
             </div>
             <div style="line-height: 1px;">
                 <p class="card-text">
                     Address 2:
-                    <span class="text-secondary">{{ $picupAddress->address_line2 }}
+                    <span class="text-secondary">
+                        {{ isset($picupAddress) && is_object($picupAddress) ? $picupAddress->address_line2 : 'N/A' }}
                     </span>
                 </p>
                 <p class="card-text">
-                    State:
-                    <span class="text-secondary">{{ $picupAddress->district_cd == 'KM' ? 'Kamrup(Metro)' : 'NA' }}
+                    District:
+                    <span class="text-secondary">
+                        {{ isset($picupAddress) && is_object($picupAddress) && $picupAddress->district_cd == 'KM' ? 'Kamrup(Metro)' : 'NA' }}
                     </span>
                 </p>
             </div>
@@ -135,15 +138,19 @@
                             <td style="display: none; overflow-wrap: break-word; white-space: normal;">
                                 {{ $item->booking_ref_no }}
                             </td>
-                            {{-- <td>
-                                <a href="#" class="btn btn-xs py-1 btn-outline-primary edit-btn" data-bs-toggle="modal"
-                                    data-bs-target="#editModal" data-booking-id="{{ $item->booking_ref_no }}"
-                                    data-customer-name="{{ $item->full_name }}"
-                                    data-delivery-status="{{ $item->is_delivered }}"
-                                    data-delivery-at="{{ $item->delivered_at != null ? $item->delivered_at : $today }}">
-                                    <i class="tf-icons bx bx-edit"></i> Update
-                                </a>
-                            </td> --}}
+                            {{--  // Place to Add back the delivery update code
+
+                                    <td>
+                                         <a href="#" class="btn btn-xs py-1 btn-outline-primary edit-btn" data-bs-toggle="modal"
+                                             data-bs-target="#editModal" data-booking-id="{{ $item->booking_ref_no }}"
+                                             data-customer-name="{{ $item->full_name }}"
+                                             data-delivery-status="{{ $item->is_delivered }}"
+                                             data-delivery-at="{{ $item->delivered_at != null ? $item->delivered_at : $today }}">
+                                             <i class="tf-icons bx bx-edit"></i> Update
+                                         </a>
+                                     </td>
+
+                            --}}
                         </tr>
                     @endforeach
                 </tbody>
@@ -249,14 +256,15 @@
                 var customerName = button.data('customer-name');
                 var deliveryStatus = button.data('delivery-status');
                 var deliveryAt = button.data('delivery-at');
-                console.log(deliveryAt);
+
                 var modal = $(this);
                 modal.find('#book_id_edit').text(bookingID);
                 modal.find('#customer_name_edit').text(customerName);
                 modal.find('#booking_ref_no').val(bookingID);
                 modal.find('#delivery_status').val(deliveryStatus);
                 modal.find('#update_date').val(deliveryAt);
-                if (deliveryStatus == 'Y') {
+
+                if (deliveryStatus === 'Y') {
                     $('#delivery_date').show();
                 } else {
                     $('#delivery_date').hide();
@@ -265,7 +273,7 @@
 
             $('#delivery_status').on('change', function() {
                 var deliveryStatus = $(this).val();
-                if (deliveryStatus == 'Y') {
+                if (deliveryStatus === 'Y') {
                     $('#delivery_date').show();
                 } else {
                     $('#delivery_date').hide();

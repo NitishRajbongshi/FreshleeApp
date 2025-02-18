@@ -41,21 +41,26 @@
                             <input type="checkbox" id="ckbCheckAll" /> Select all items
                         </div>
                         <ul class="list-group" style="list-style-type: none;" id="item-list">
-                            @foreach ($priceList as $item)
-                                <li class="list-group-item lh-1">
-                                    <label>
-                                        <input type="checkbox" class="item-checkbox" data-item-id="{{ $item['item_cd'] }}"
-                                            data-name="{{ $item['item_name'] }}"
-                                            data-quantity="{{ $item['item_quantity'] }}"
-                                            data-qty-unit="{{ $item['qty_unit'] }}"
-                                            data-price-per-kg="{{ $item['price_per_kg'] }}"
-                                            data-total-price="{{ $item['total_price'] }}"
-                                            data-price-unit="{{ $item['item_price_in_unit'] }}">
-                                        {{ $item['item_name'] }} ({{ $item['item_quantity'] }} {{ $item['qty_unit'] }})
-                                        - Price: Rs. {{ $item['total_price'] }}
-                                    </label>
-                                </li>
-                            @endforeach
+                            @if (empty($priceList))
+                                <li>No items found.</li>
+                            @else
+                                @foreach ($priceList as $item)
+                                    <li class="list-group-item lh-1">
+                                        <label>
+                                            <input type="checkbox" class="item-checkbox"
+                                                data-item-id="{{ $item['item_cd'] }}" data-name="{{ $item['item_name'] }}"
+                                                data-quantity="{{ $item['item_quantity'] }}"
+                                                data-qty-unit="{{ $item['qty_unit'] }}"
+                                                data-price-per-kg="{{ $item['price_per_kg'] }}"
+                                                data-total-price="{{ $item['total_price'] }}"
+                                                data-price-unit="{{ $item['item_price_in_unit'] }}">
+                                            {{ $item['item_name'] }} ({{ $item['item_quantity'] }}
+                                            {{ $item['qty_unit'] }})
+                                            - Price: Rs. {{ $item['total_price'] }}
+                                        </label>
+                                    </li>
+                                @endforeach
+                            @endif
                         </ul>
                         <div style="text-align: right;">
                             <button type="button" class="my-2 btn btn-sm btn-primary" id="calculateBill">
@@ -206,32 +211,59 @@
                 });
 
                 if (selectedItems.length === 0) {
-                    alert('Please select at least one item to mark as delivered.');
-                    return;
-                }
-                const deliveryStatus = confirm('OK to continue?');
-                if (!deliveryStatus) {
-                    alert('Item not mark as delivered.');
+                    Swal.fire(
+                        'Waring!',
+                        'Select atleast one item',
+                        'error'
+                    );
                     return;
                 }
 
-                $.ajax({
-                    url: "{{ route('order.delivered') }}",
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                    },
-                    data: {
-                        booking_id: "{{ $booking_id }}",
-                        item_cds: selectedItems,
-                    },
-                    success: function(response) {
-                        alert(response.message);
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alert('An error occurred. Please try again.');
-                        console.error(xhr.responseText); // Log error for debugging
+                // Show a confirmation dialog using SweetAlert
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you want to mark these items as delivered?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, mark as delivered!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('order.delivered') }}",
+                            method: "POST",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            data: {
+                                booking_id: "{{ $booking_id }}",
+                                item_cds: selectedItems,
+                            },
+                            success: function(response) {
+                                Swal.fire(
+                                    'Delivered!',
+                                    response.message,
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred. Please try again.',
+                                    'error'
+                                );
+                                console.error(xhr.responseText); // Log error for debugging
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire(
+                            'Cancelled',
+                            'Items are not marked as delivered.',
+                            'error'
+                        );
                     }
                 });
             }

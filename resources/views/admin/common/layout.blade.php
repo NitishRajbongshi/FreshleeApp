@@ -54,6 +54,10 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    {{-- sweetalert --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
     <!-- Helpers -->
     <script src="{{ asset('admin_assets/vendor/js/helpers.js') }}"></script>
 
@@ -61,6 +65,12 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('admin_assets/js/config.js') }}"></script>
     @yield('custom_header')
+    <style>
+        .swal2-popup {
+            font-size: 10px;
+            /* Adjust the size as needed */
+        }
+    </style>
 </head>
 
 <body>
