@@ -36,13 +36,13 @@
                         <ul class="menu-sub">
                             <li class="menu-item {{ Request::routeIs('admin.user.order') ? 'active' : '' }}">
                                 <a href="{{ route('admin.user.order') }}" class="menu-link text-sm">
-                                    <div data-i18n="Application-Master">User Order Details
+                                    <div data-i18n="Application-Master">Manage User Order
                                     </div>
                                 </a>
                             </li>
                             <li class="menu-item {{ Request::routeIs('admin.proxy.user.list') ? 'active' : '' }}">
                                 <a href="{{ route('admin.proxy.user.list') }}" class="menu-link text-sm">
-                                    <div data-i18n="Application-Master">Proxy Order
+                                    <div data-i18n="Application-Master">Place User Order
                                     </div>
                                 </a>
                             </li>
