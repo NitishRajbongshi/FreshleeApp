@@ -33,6 +33,7 @@
                             +91 {{ $cust_phone }}
                         </span>
                     </p>
+                    <a href="{{route("admin.user.order")}}" class="my-2 btn btn-sm btn-primary">Back to order list</a>
                 </div>
                 <div class="col-12 col-md-6 text-sm">
                     <h5 class="text-md">Ordered Item List</h5>

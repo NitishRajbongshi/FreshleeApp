@@ -47,8 +47,8 @@
                                     </button>
                                 </a> --}}
                                 <p id="loader_gif" style="display:none;">
-                                    <img src="{{ asset('admin_assets\img\gif\loader.gif') }}" alt="loader" width="30px;">
-                                    Getting user details
+                                    <img src="{{ asset('admin_assets\img\gif\loader.gif') }}" alt="loader" width="28px;">
+                                    Getting customer details...
                                 </p>
                             </div>
                         </div>
