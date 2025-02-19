@@ -163,13 +163,27 @@
 
                 $("#qty_unit").val("");
                 $('#unit_kg, #unit_gm, #unit_ltr, #unit_ml, #unit_unit, #unit_mutha').hide();
-                console.log(item_min_unit);
-                if (item_min_unit == 'kg' || item_min_unit == 'gm') {
-                    $('#unit_kg, #unit_gm').show();
-                } else if (item_min_unit == 'ltr' || item_min_unit == 'ml') {
-                    $('#unit_ltr, #unit_ml').show();
-                } else {
-                    $('#unit_unit, #unit_mutha').show();
+                switch (item_min_unit) {
+                    case 'kg':
+                    case 'gm':
+                        $('#unit_kg, #unit_gm').show();
+                        break;
+
+                    case 'ltr':
+                    case 'ml':
+                        $('#unit_ltr, #unit_ml').show();
+                        break;
+
+                    case 'mutha':
+                        $('#unit_mutha').show();
+                        break;
+
+                    case 'unit':
+                        $('#unit_unit').show();
+                        break;
+
+                    default:
+                        break;
                 }
             })
         });

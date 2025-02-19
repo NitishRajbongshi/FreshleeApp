@@ -193,13 +193,27 @@
                 $("#qty_unit").val("");
                 $('#unit_kg, #unit_gm, #unit_ltr, #unit_ml, #unit_unit, #unit_mutha').hide();
                 var itemUnit = $.trim($('#item_cd').find(':selected').data('unit'));
-                console.log(itemUnit);
-                if (itemUnit == 'kg' || itemUnit == 'gm') {
-                    $('#unit_kg, #unit_gm').show();
-                } else if (itemUnit == 'ltr' || itemUnit == 'ml') {
-                    $('#unit_ltr, #unit_ml').show();
-                } else {
-                    $('#unit_unit, #unit_mutha').show();
+                switch (itemUnit) {
+                    case 'kg':
+                    case 'gm':
+                        $('#unit_kg, #unit_gm').show();
+                        break;
+
+                    case 'ltr':
+                    case 'ml':
+                        $('#unit_ltr, #unit_ml').show();
+                        break;
+
+                    case 'mutha':
+                        $('#unit_mutha').show();
+                        break;
+
+                    case 'unit':
+                        $('#unit_unit').show();
+                        break;
+
+                    default:
+                        break;
                 }
             })
 
