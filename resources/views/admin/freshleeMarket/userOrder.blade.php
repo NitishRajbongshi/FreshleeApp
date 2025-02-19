@@ -43,6 +43,7 @@
             </div>
         </div>
     </div>
+
     <div class="card my-1">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
             <h5 class="text-md lh-1 ">User Order Details
@@ -61,7 +62,8 @@
                     @csrf
                     <input type="hidden" id="start_date" name="start_date" value="{{ $first }}">
                     <input type="hidden" id="end_date" name="end_date" value="{{ $today }}">
-                    <button type="submit" class="btn btn-md text-xs btn-outline-none text-danger text-decoration-underline">
+                    <button type="submit"
+                        class="btn btn-md text-xs btn-outline-none text-danger text-decoration-underline">
                         Order History
                     </button>
                 </form>
@@ -104,6 +106,20 @@
                                         </li>
                                     @endforeach
                                 </ol>
+                                <div class="lh-1 ps-3 d-flex align-items-center">
+                                    <p class="btn btn-xs btn-outline-secondary price_btn"
+                                        data-ref_id="{{ $item->booking_ref_no }}">
+                                        Get Price
+                                    </p>
+                                    <p id="{{ $item->booking_ref_no }}_loader_gif" style="display: none;">
+                                        <img src="{{ asset('admin_assets\img\gif\loader.gif') }}" alt="loader"
+                                            width="22px;">Calculating..
+                                    </p>
+                                    <p id="{{ $item->booking_ref_no }}_price_tab" style="display: none;"
+                                        class="fw-bold ms-1">
+                                        Rs. <span id="{{ $item->booking_ref_no }}_total_price"></span>
+                                    </p>
+                                </div>
                             </td>
                             <td style="overflow-wrap: break-word; white-space: normal;">
                                 {{ $item->is_delivered == 'Y' ? 'Delivered' : 'Pending' }}
@@ -233,31 +249,76 @@
 @section('custom_js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide success alert
             var successAlert = document.getElementById('successAlert');
-
             if (successAlert) {
                 setTimeout(function() {
-                    successAlert.style.opacity = '0';
                     successAlert.style.transition = 'opacity 0.5s ease-out';
+                    successAlert.style.opacity = '0';
                     setTimeout(function() {
                         successAlert.remove();
                     }, 500);
                 }, 5000);
             }
+
+            // Initialize DataTables after the DOM is fully loaded
+            $(document).ready(function() {
+                $('#tblUser').DataTable();
+                $('#itemsTable').DataTable();
+            });
         });
 
         $(document).ready(function() {
-            $('#tblUser').DataTable();
-            $('#itemsTable').DataTable();
 
+            // Price calculation
+            $('.price_btn').on('click', function() {
+                const bookingId = $(this).data('ref_id');
+                const loaderGif = $(`#${bookingId}_loader_gif`);
+                const priceTab = $(`#${bookingId}_price_tab`);
+                const totalPriceElement = $(`#${bookingId}_total_price`);
+
+                loaderGif.show();
+                priceTab.hide();
+
+                $.ajax({
+                    url: "{{ route('order.pricing') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        booking_id: bookingId
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            totalPriceElement.text(response.total_price);
+                            loaderGif.hide();
+                            priceTab.show();
+                        } else {
+                            totalPriceElement.text('Error!');
+                            loaderGif.hide();
+                            priceTab.show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error:", xhr, status, error);
+                        totalPriceElement.text('Error!');
+                        loaderGif.hide();
+                        priceTab.show();
+                        // Optionally, display a user-friendly error message:
+                        alert(
+                            "An error occurred while calculating the price. Please try again.");
+                    }
+                });
+            });
+
+            // Edit Modal
             $('#editModal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var bookingID = button.data('booking-id');
-                var customerName = button.data('customer-name');
-                var deliveryStatus = button.data('delivery-status');
-                var deliveryAt = button.data('delivery-at');
+                const button = $(event.relatedTarget);
+                const bookingID = button.data('booking-id');
+                const customerName = button.data('customer-name');
+                const deliveryStatus = button.data('delivery-status');
+                const deliveryAt = button.data('delivery-at');
 
-                var modal = $(this);
+                const modal = $(this);
                 modal.find('#book_id_edit').text(bookingID);
                 modal.find('#customer_name_edit').text(customerName);
                 modal.find('#booking_ref_no').val(bookingID);
@@ -272,8 +333,7 @@
             });
 
             $('#delivery_status').on('change', function() {
-                var deliveryStatus = $(this).val();
-                if (deliveryStatus === 'Y') {
+                if ($(this).val() === 'Y') {
                     $('#delivery_date').show();
                 } else {
                     $('#delivery_date').hide();

@@ -44,6 +44,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
     Route::post("order/delivery/update", [ItemReportController::class, 'updateDeliveryStatus'])->name('admin.order.delivery.update');
     Route::post("order/history", [ItemReportController::class, 'history'])->name('admin.order.history');
     Route::post('order/billing', [ItemReportController::class, 'billing'])->name('order.billing');
+    Route::post('order/pricing', [ItemReportController::class, 'pricing'])->name('order.pricing'); // get total price for a single order
     Route::post('order/delivered', [ItemReportController::class, 'markAsDelivered'])->name('order.delivered');
     Route::post('order/invoice', [InvoiceController::class, 'generateInvoice'])->name('generate.invoice');
 

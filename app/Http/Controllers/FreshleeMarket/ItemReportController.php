@@ -329,6 +329,95 @@ class ItemReportController extends Controller
         }
     }
 
+    public function pricing(Request $request)
+    {
+        try {
+            // Validate booking_id
+            $booking_id = $request->booking_id;
+            if (empty($booking_id)) {
+                Log::info("Booking ID is missing!");
+                throw new \Exception("Booking ID is required.");
+            }
+
+            // Fetch items for the given booking_ref_no
+            $items = DB::table('smartag_market.tbl_customer_booking_details')
+                ->select('item_cd', 'item_quantity', 'qty_unit', 'zone_cd')
+                ->where('booking_ref_no', $booking_id)
+                ->get();
+
+            // Check if items are found
+            if ($items->isEmpty()) {
+                Log::info("No items found for the given booking reference number!");
+                throw new \Exception("No items found for the given booking reference number.");
+            }
+
+            $itemData = [];
+            $totalPrice = 0;
+
+            // Process each item
+            foreach ($items as $item) {
+                $itemCode = $item->item_cd;
+                $quantity = $item->item_quantity;
+                $unit = strtolower($item->qty_unit); // Normalize to lowercase
+                $zoneCd = $item->zone_cd;
+
+                // Convert grams to kilograms or milliliters to liters
+                if ($unit === 'gm' || $unit === 'ml') {
+                    $quantity = $quantity / 1000;
+                }
+
+                $itemData[] = [
+                    'item_cd' => $itemCode,
+                    'quantity' => $quantity,
+                    'zone_cd' => $zoneCd,
+                ];
+            }
+
+            // Fetch prices for all items
+            $itemCodes = collect($itemData)->pluck('item_cd')->toArray();
+            $prices = DB::table('smartag_market.tbl_items_sale_price_for_customer_zone_wise')
+                ->whereIn('item_cd', $itemCodes)
+                ->pluck('actual_sale_price_per_1kg', 'item_cd'); // Get prices as key-value pair
+
+            // Calculate total price
+            foreach ($itemData as $data) {
+                $itemCode = $data['item_cd'];
+                $quantity = $data['quantity'];
+                $pricePerKg = $prices[$itemCode] ?? 0; // Default to 0 if price not found
+
+                if ($pricePerKg === 0) {
+                    Log::warning("Price not found for item: $itemCode");
+                }
+
+                $totalPrice += $quantity * $pricePerKg;
+            }
+
+            // Return success response
+            return response()->json([
+                'status' => 'success',
+                'booking_ref_no' => $booking_id,
+                'total_price' => $totalPrice,
+                'items' => $itemData,
+            ], 201);
+        } catch (\Exception $e) {
+            // Log the error with context
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'booking_id' => $booking_id ?? null,
+            ]);
+
+            // Return error response
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(), // Provide error message for debugging
+                'booking_ref_no' => $booking_id ?? null,
+                'total_price' => 'NA',
+                'items' => null,
+            ], 500);
+        }
+    }
+
     public function markAsDelivered(Request $request)
     {
         Log::info($request->all());

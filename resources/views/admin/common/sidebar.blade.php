@@ -67,20 +67,5 @@
                 @endif
             @endforeach
         @endif
-
-        {{-- Farmers Inventory --}}
-        {{-- <li class="menu-item {{ Request::routeIs('farmer.stock') ? 'open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link text-sm menu-toggle">
-                <i class="menu-icon tf-icons bx bx-layer"></i>
-                <div data-i18n="Application-Master">Farmer's Inventory</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('farmer.stock') ? 'active' : '' }}">
-                    <a href="{{ route('farmer.stock') }}" class="menu-link text-sm">
-                        <div data-i18n="Application-Master">Farmer's Stock</div>
-                    </a>
-                </li>
-            </ul>
-        </li> --}}
     </ul>
 </aside>
