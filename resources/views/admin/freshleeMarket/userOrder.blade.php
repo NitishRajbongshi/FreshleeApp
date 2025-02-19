@@ -175,7 +175,7 @@
     </div>
     <div class="card">
         <div id="report">
-            <h5 class="card-header text-md lh-1">
+            <h5 class="col-12 col-md-8 card-header text-md lh-1">
                 Item Report <br>
                 <span class="text-xs text-secondary">Listing all the ordered items between <span class="text-primary">
                         {{ $start }}</span> (Monday) to
@@ -204,6 +204,14 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="me-3 mb-2">
+            <form action="{{ route('download.report.weekly') }}" method="POST" id="invoiceForm">
+                @csrf
+                <div style="text-align: right;">
+                    <button type="submit" class="btn btn-sm btn-warning mt-3">Download Report</button>
+                </div>
+            </form>
         </div>
     </div>
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">

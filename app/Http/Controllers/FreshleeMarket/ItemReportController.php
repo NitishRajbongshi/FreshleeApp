@@ -5,6 +5,7 @@ namespace App\Http\Controllers\FreshleeMarket;
 use App\Http\Controllers\Controller;
 use App\Models\MasterItemUnit;
 use App\Models\Order\TblCustomerBookingDetail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -438,11 +439,6 @@ class ItemReportController extends Controller
         return response()->json(['message' => 'Selected items marked as delivered successfully.']);
     }
 
-    public function proxyOrder()
-    {
-        dd('here');
-    }
-
     public function modify(Request $request)
     {
         $user = Auth::user();
@@ -582,5 +578,51 @@ class ItemReportController extends Controller
             ]);
             return view('errors.generic');
         }
+    }
+
+    public function downloadWeeklyReport(Request $reuest)
+    {
+        $today = Carbon::today()->toDateString();;
+        $start = Carbon::now()->startOfWeek(Carbon::MONDAY)->toDateString();
+        $first = Carbon::now()->startOfMonth()->toDateString();
+        $itemCounts = DB::table('smartag_market.tbl_customer_booking_details')
+            ->select(
+                'smartag_market.tbl_customer_booking_details.item_cd',
+                'smartag_market.tbl_item_master.item_name',
+                'smartag_market.tbl_item_master.item_price_in',
+                DB::raw("
+                                SUM(
+                                        CASE 
+                                            WHEN 
+                                                smartag_market.tbl_customer_booking_details.qty_unit = 'gm' then 
+                                                    item_quantity/1000 
+                                            ELSE 
+                                                    item_quantity 
+                                        END
+                                    ) AS total_quantity
+                            ")
+            )
+            ->leftJoin(
+                'smartag_market.tbl_item_master',
+                'smartag_market.tbl_customer_booking_details.item_cd',
+                '=',
+                'smartag_market.tbl_item_master.item_cd'
+            )
+            ->groupBy(
+                'smartag_market.tbl_customer_booking_details.item_cd',
+                'smartag_market.tbl_item_master.item_name',
+                'smartag_market.tbl_item_master.item_price_in'
+            )
+            ->whereBetween(DB::raw('DATE(smartag_market.tbl_customer_booking_details.order_date)'), [$start, $today])
+            ->get();
+        $data = [
+            'header' => 'Weekly Report',
+            'subheader' => 'Listing all the ordered items between ' . $start . ' to ' . $today,
+            'date' => $today,
+            'itemCounts' => $itemCounts
+        ];
+        $pdf = Pdf::loadView('admin.reports.weeklyItemReport', $data);
+        $fileName = 'product_report_weekly.pdf';
+        return $pdf->download($fileName);
     }
 }
