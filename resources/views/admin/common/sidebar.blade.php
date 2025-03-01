@@ -25,7 +25,7 @@
         {{-- Only for Admin --}}
         @if (session()->has('roles'))
             @foreach (Session::get('roles') as $role)
-                @if ($role == 'C')
+                @if ($role == 'A')
                     {{-- Freshlee Market --}}
                     <li
                         class="menu-item {{ Request::routeIs('admin.user.order') || Request::routeIs('admin.proxy.user.list') ? 'open' : '' }}">
@@ -43,6 +43,22 @@
                             <li class="menu-item {{ Request::routeIs('admin.proxy.user.list') ? 'active' : '' }}">
                                 <a href="{{ route('admin.proxy.user.list') }}" class="menu-link text-sm">
                                     <div data-i18n="Application-Master">Place User Order
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li
+                        class="menu-item {{ Request::routeIs('admin.inventory') ? 'open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link text-sm menu-toggle">
+                            <i class='menu-icon tf-icons bx bxs-cart-alt'></i>
+                            <div data-i18n="Application-Master">Freshlee Inventory</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item {{ Request::routeIs('admin.inventory') ? 'active' : '' }}">
+                                <a href="{{ route('admin.inventory') }}" class="menu-link text-sm">
+                                    <div data-i18n="Application-Master">Manage Inventory
                                     </div>
                                 </a>
                             </li>
