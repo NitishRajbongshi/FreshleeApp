@@ -38,9 +38,14 @@
                 <div class="col-12 col-md-6 text-sm">
                     <h5 class="text-md">Ordered Item List</h5>
                     <form id="itemForm">
+                    
                         <div class="my-2 text-danger">
                             <input type="checkbox" id="ckbCheckAll" /> Select all items
+                            <input type="checkbox" id="ckbDeliveryChargeFifty"  value="50" onclick="toggleCheckbox(this, 'ckbDeliveryChargeSeventyFive')"/> Delivery Charge Rs.50
+                            <input type="checkbox" id="ckbDeliveryChargeSeventyFive" value="75" onclick="toggleCheckbox(this, 'ckbDeliveryChargeFifty')"/> Delivery Charge Rs.75
                         </div>
+                        
+                        
                         <ul class="list-group" style="list-style-type: none;" id="item-list">
                             @if (empty($priceList))
                                 <li>No items found.</li>
@@ -49,7 +54,7 @@
                                     <li class="list-group-item lh-1">
                                         <label>
                                             <input type="checkbox" class="item-checkbox"
-                                                data-item-id="{{ $item['item_cd'] }}" data-name="{{ $item['item_name'] }}"
+                                                data-item-id="{{ $item['item_cd'] }}" data-name="{{ $item['item_name'] }}" 
                                                 data-quantity="{{ $item['item_quantity'] }}"
                                                 data-qty-unit="{{ $item['qty_unit'] }}"
                                                 data-price-per-kg="{{ $item['price_per_kg'] }}"
@@ -99,6 +104,10 @@
                     </tbody>
                     <tfoot>
                         <tr class="">
+                            <th colspan="3" class="p-1 text-end pe-3 text-sm">Delivery Charge</th>
+                            <th id="txtDeliveryCharge" class="p-1 text-end pe-3 text-sm">Rs. 0</th>
+                        </tr>
+                        <tr class="">
                             <th colspan="3" class="p-1 text-end pe-3 text-sm">Total Amount</th>
                             <th id="totalAmount" class="p-1 text-end pe-3 text-sm">Rs. 0</th>
                         </tr>
@@ -110,6 +119,7 @@
                 <input type="hidden" name="booking_id" value="{{ $booking_id }}">
                 <input type="hidden" name="customer_name" value="{{ $cust_name }}">
                 <input type="hidden" name="customer_phone" value="{{ $cust_phone }}">
+                <input type="hidden" name="hdnDeliveryCharge" id ="hdnDeliveryCharge" value="">
                 <input type="hidden" name="total_amount" id="total_amount">
                 <div id="selectedItemsContainer"></div>
                 <div style="text-align: right;">
@@ -123,6 +133,13 @@
 
 @section('custom_js')
     <script>
+        function toggleCheckbox(current, otherId) {
+            const otherCheckbox = document.getElementById(otherId);
+            if (current.checked) {
+                otherCheckbox.checked = false;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             var successAlert = document.getElementById('successAlert');
 
@@ -199,7 +216,16 @@
                         </tr>
                     `);
                 });
-
+                var delvCharge = 0;
+                if($("#ckbDeliveryChargeFifty").is(":checked"))
+                    delvCharge = parseFloat($("#ckbDeliveryChargeFifty").val());
+                
+                if($("#ckbDeliveryChargeSeventyFive").is(":checked"))
+                    delvCharge = parseFloat($("#ckbDeliveryChargeSeventyFive").val());
+                
+                $('#txtDeliveryCharge').text("Rs." + delvCharge);
+                $('#invoiceForm #hdnDeliveryCharge').text("Rs." + delvCharge); 
+                totalAmount = totalAmount + delvCharge;
                 $('#totalAmount').text(`Rs. ${totalAmount.toFixed(2)}`);
                 $('#billDetails').removeClass('d-none').show();
             }
@@ -297,6 +323,16 @@
                     <input type="hidden" name="items[${itemId}][total_price]" value="${totalPrice}">
                     `);
                 });
+
+                var delvCharge = 0;
+                if($("#ckbDeliveryChargeFifty").is(":checked"))
+                    delvCharge = parseFloat($("#ckbDeliveryChargeFifty").val());
+                
+                if($("#ckbDeliveryChargeSeventyFive").is(":checked"))
+                    delvCharge = parseFloat($("#ckbDeliveryChargeSeventyFive").val());
+                
+                $('#invoiceForm #hdnDeliveryCharge').val(delvCharge); 
+                totalAmount = totalAmount + delvCharge;
 
                 $('#total_amount').val(totalAmount.toFixed(2));
             }

@@ -41,7 +41,7 @@
     <div style="text-align: center; margin-bottom: 10px;">
         <img src="{{ $logo }}" style="width: 150px; height: auto;">
     </div>
-    
+
     <table class="cust_table" style="margin-bottom: 5px;">
         <tbody>
             <tr>
@@ -54,7 +54,8 @@
             </tr>
         </tbody>
     </table>
-    <p style="font-size: 12px;">Delivery Address: Vidhi Analytica, House No. 15, Mother Teressa Road, Zoo Narengi Road, Guwahati, 781021</p>
+    <p style="font-size: 12px;">Delivery Address: Vidhi Analytica, House No. 15, Mother Teressa Road, Zoo Narengi Road,
+        Guwahati, 781021</p>
     <table class="invoice-table">
         <thead>
             <tr>
@@ -74,16 +75,23 @@
                 </tr>
             @endforeach
             <tr class="total-row">
+                <td colspan="3">Delivery Charge</td>
+                <td>Rs. {{ number_format($deliveryCharge, 2) }}</td>
+            </tr>
+            <tr class="total-row">
                 <td colspan="3">Total Amount</td>
                 <td>Rs. {{ number_format($total_amount, 2) }}</td>
             </tr>
         </tbody>
     </table>
-    <h5>Total amount: <span style="text-transform: capitalize;">{{ $amountInWords }} Rupees only.</span></h5>
+    <h5>Total amount: Rupees <span style="text-transform: capitalize;">{{ $amountInWords }} only.</span></h5>
     <p style="font-size: 13px; color: rgb(63, 62, 62);">For the farmers and with the farmers</p>
     <p style="font-size: 12px; color: rgb(63, 62, 62);">With the commitment to sustainable agriculture- Team Vidhi</p>
     <p style="font-size: 12px; color: rgb(63, 62, 62);">Invoice Generated: {{ $date }}</p>
-    <p style="font-size: 12px; color: rgb(63, 62, 62); border-top: 1px solid gray; padding-top: 4px; text-align: center;">An initiative of Vidhi Agrotech Private Limited with the support from Vidhi Analytica LLP and EEL-NER under ICAR, Govt. of India.</p>
+    <p
+        style="font-size: 12px; color: rgb(63, 62, 62); border-top: 1px solid gray; padding-top: 4px; text-align: center;">
+        An initiative of Vidhi Agrotech Private Limited with the support from Vidhi Analytica LLP and EEL-NER under
+        ICAR, Govt. of India.</p>
 </body>
 
 </html>

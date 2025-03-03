@@ -17,6 +17,7 @@ class InvoiceController extends Controller
         $customerPhone = $request->input('customer_phone');
         $selectedItems = $request->input('items', []);
         Log::info($selectedItems);
+        $deliveryCharge = $request->input('hdnDeliveryCharge');
         $totalAmount = $request->input('total_amount');
         $amountInWords = $this->numberToWords($totalAmount);
         // get logo from public folder
@@ -27,6 +28,7 @@ class InvoiceController extends Controller
             'customer_name' => $customerName,
             'customer_phone' => $customerPhone,
             'items' => $selectedItems,
+            'deliveryCharge' => $deliveryCharge,
             'total_amount' => $totalAmount,
             'amountInWords' => $amountInWords,
             'logo' => $logo
@@ -34,26 +36,27 @@ class InvoiceController extends Controller
 
         $custName = str_replace(' ', '_', strtolower($customerName));
         $pdf = Pdf::loadView('admin.freshleeMarket.invoice', $data);
-        $fileName = 'Invoice_' . $custName . '.pdf'; 
+        $fileName = 'Invoice_' . $custName . '.pdf';
         return $pdf->download($fileName);
     }
 
-    public function numberToWords($number) {
+    public function numberToWords($number)
+    {
         $units = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
         $teens = ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
         $tens = ["", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
-    
+
         if ($number == 0) {
             return "zero";
         }
-    
+
         $words = "";
-    
+
         if ($number < 0) {
             $words = "minus ";
             $number = abs($number);
         }
-    
+
         if ($number < 10) {
             $words .= $units[intval($number)];
         } elseif ($number < 20) {
@@ -67,7 +70,7 @@ class InvoiceController extends Controller
         } else {
             $words .= $this->numberToWords(intval($number / 1000000)) . " million " . $this->numberToWords($number % 1000000);
         }
-    
+
         return trim($words);
     }
 }
