@@ -286,6 +286,124 @@ class ItemReportController extends Controller
         }
     }
 
+    public function orderReport(Request $request)
+    {
+        try {
+            $today = Carbon::today()->toDateString();
+            $first = Carbon::now()->startOfMonth()->toDateString();
+            $start = Carbon::now()->startOfWeek(Carbon::MONDAY)->toDateString();
+            $chartData = [];
+            $chartLabels = [];
+            $data = DB::table('smartag_market.tbl_customer_booking_details')
+                ->select(
+                    'smartag_market.tbl_customer_booking_details.item_cd',
+                    'smartag_market.tbl_item_master.item_name',
+                    'smartag_market.tbl_item_master.item_price_in',
+                    DB::raw("
+                            SUM(
+                                    CASE 
+                                        WHEN 
+                                            smartag_market.tbl_customer_booking_details.qty_unit = 'gm' then 
+                                                item_quantity/1000 
+                                        ELSE 
+                                                item_quantity 
+                                    END
+                                ) AS total_quantity
+                        ")
+                )
+                ->leftJoin(
+                    'smartag_market.tbl_item_master',
+                    'smartag_market.tbl_customer_booking_details.item_cd',
+                    '=',
+                    'smartag_market.tbl_item_master.item_cd'
+                )
+                ->groupBy(
+                    'smartag_market.tbl_customer_booking_details.item_cd',
+                    'smartag_market.tbl_item_master.item_name',
+                    'smartag_market.tbl_item_master.item_price_in'
+                )
+                ->whereBetween(DB::raw('DATE(smartag_market.tbl_customer_booking_details.order_date)'), [$start, $today])
+                ->get();
+
+            foreach ($data as $item) {
+                $chartLabels[] = $item->item_name; // Labels for the pie chart
+                $chartData[] = (float)$item->total_quantity; // Values for the pie chart
+            }
+            return view('admin.freshleeMarket.orderReport.orderReport', [
+                'data' => $data,
+                'start' => $start,
+                'first' => $first,
+                'today' => $today,
+                'chartLabels' => $chartLabels,
+                'chartData' => $chartData,
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return view('errors.generic');
+        }
+    }
+
+    public function reportHistory(Request $request)
+    {
+        try {
+            $start = $request->start_date;
+            $today = $request->end_date;
+            $chartData = [];
+            $chartLabels = [];
+            $data = DB::table('smartag_market.tbl_customer_booking_details')
+                ->select(
+                    'smartag_market.tbl_customer_booking_details.item_cd',
+                    'smartag_market.tbl_item_master.item_name',
+                    'smartag_market.tbl_item_master.item_price_in',
+                    DB::raw("
+                            SUM(
+                                    CASE 
+                                        WHEN 
+                                            smartag_market.tbl_customer_booking_details.qty_unit = 'gm' then 
+                                                item_quantity/1000 
+                                        ELSE 
+                                                item_quantity 
+                                    END
+                                ) AS total_quantity
+                        ")
+                )
+                ->leftJoin(
+                    'smartag_market.tbl_item_master',
+                    'smartag_market.tbl_customer_booking_details.item_cd',
+                    '=',
+                    'smartag_market.tbl_item_master.item_cd'
+                )
+                ->groupBy(
+                    'smartag_market.tbl_customer_booking_details.item_cd',
+                    'smartag_market.tbl_item_master.item_name',
+                    'smartag_market.tbl_item_master.item_price_in'
+                )
+                ->whereBetween(DB::raw('DATE(smartag_market.tbl_customer_booking_details.order_date)'), [$start, $today])
+                ->get();
+
+            foreach ($data as $item) {
+                $chartLabels[] = $item->item_name; // Labels for the pie chart
+                $chartData[] = (float)$item->total_quantity; // Values for the pie chart
+            }
+            return view('admin.freshleeMarket.orderReport.reportHistory', [
+                'data' => $data,
+                'first' => $start,
+                'today' => $today,
+                'chartLabels' => $chartLabels,
+                'chartData' => $chartData,
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return view('errors.generic');
+        }
+    }
+
     public function billing(Request $request)
     {
         try {

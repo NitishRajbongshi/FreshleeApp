@@ -57,6 +57,8 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{asset('admin_assets/js/config.js')}}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     @yield('custom_header')
   </head>
 

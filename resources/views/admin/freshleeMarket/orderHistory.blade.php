@@ -36,7 +36,7 @@
             </h5>
         </div>
         <div class="table-responsive text-nowrap px-4 pb-2">
-            <table class="table text-xs" id="tblUser">
+            <table class="border table text-xs" id="tblUser">
                 <thead>
                     <tr>
                         <th>Customer Info</th>

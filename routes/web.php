@@ -47,6 +47,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
     Route::post('order/billing', [ItemReportController::class, 'billing'])->name('order.billing');
     Route::post('order/pricing', [ItemReportController::class, 'pricing'])->name('order.pricing'); // get total price for a single order
     Route::post('order/delivered', [ItemReportController::class, 'markAsDelivered'])->name('order.delivered');
+    Route::get("order/report", [ItemReportController::class, 'orderReport'])->name('admin.order.report');
+    Route::post("order/report/history", [ItemReportController::class, 'reportHistory'])->name('admin.order.report.history');
     Route::post('order/report/weekly', [ItemReportController::class, 'downloadWeeklyReport'])->name('download.report.weekly');
     Route::post('order/invoice', [InvoiceController::class, 'generateInvoice'])->name('generate.invoice');
 
@@ -58,6 +60,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
 
     // manage inventory
     Route::get('inventory', [InventoryController::class, 'index'])->name('admin.inventory');
+    Route::post('inventory/store', [InventoryController::class, 'store'])->name('admin.inventory.store');
 });
 
 // End of freshlee routes

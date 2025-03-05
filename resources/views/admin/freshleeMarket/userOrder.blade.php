@@ -52,9 +52,14 @@
                         {{ $start }}</span> (Monday) to
                     <span class="text-primary">{{ $today }}</span> (Present Day).</span>
             </h5>
+            <div>
+                <a href="{{ route('admin.proxy.user.list') }}" class="btn btn-sm btn-primary">
+                    Place New Order
+                </a>
+            </div>
             <div class="d-flex align-items-center">
                 <div>
-                    <a href="#report" class="text-decoration-underline text-xs">
+                    <a href="{{ route('admin.order.report') }}" class="text-decoration-underline text-xs">
                         Weekly Report
                     </a>
                 </div>
@@ -70,7 +75,7 @@
             </div>
         </div>
         <div class="table-responsive text-nowrap px-4 pb-2">
-            <table class="table text-xs" id="tblUser">
+            <table class="border table text-xs" id="tblUser">
                 <thead>
                     <tr class="text-center">
                         <th>Customer Details</th>
@@ -173,47 +178,6 @@
             </table>
         </div>
     </div>
-    <div class="card">
-        <div id="report">
-            <h5 class="col-12 col-md-8 card-header text-md lh-1">
-                Item Report <br>
-                <span class="text-xs text-secondary">Listing all the ordered items between <span class="text-primary">
-                        {{ $start }}</span> (Monday) to
-                    <span class="text-primary">{{ $today }}</span> (Present Day).</span>
-            </h5>
-        </div>
-        <div class="table-responsive text-nowrap px-4 pb-2">
-            <table class="table text-xs" id="itemsTable">
-                <thead>
-                    <tr class="text-center">
-                        <th scope="col">SL. No.</th>
-                        <th scope="col" class="text-start">ITEM NAME</th>
-                        <th scope="col" class="text-end">ITEM AMOUNT</th>
-                    </tr>
-                </thead>
-                <tbody class="">
-                    @php
-                        $serialNumber = 1;
-                    @endphp
-                    @foreach ($itemCounts as $item)
-                        <tr class="text-center">
-                            <td>{{ $serialNumber++ }}</td>
-                            <td class="text-start">{{ $item->item_name }}</td>
-                            <td class="text-end">{{ $item->total_quantity }} {{ $item->item_price_in }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="me-3 mb-2">
-            <form action="{{ route('download.report.weekly') }}" method="POST" id="invoiceForm">
-                @csrf
-                <div style="text-align: right;">
-                    <button type="submit" class="btn btn-sm btn-warning mt-3">Download Report</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -313,7 +277,8 @@
                         priceTab.show();
                         // Optionally, display a user-friendly error message:
                         alert(
-                            "An error occurred while calculating the price. Please try again.");
+                            "An error occurred while calculating the price. Please try again."
+                        );
                     }
                 });
             });
