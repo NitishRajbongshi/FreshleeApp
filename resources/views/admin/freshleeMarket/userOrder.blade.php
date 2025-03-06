@@ -130,16 +130,22 @@
                                 {{ $item->is_delivered == 'Y' ? 'Delivered' : 'Pending' }}
                             </td>
                             <td>
-                                <form action="{{ route('admin.user.order.modify') }}" method="GET">
-                                    @csrf
-                                    <input type="hidden" name="cust_id" value="{{ $item->cust_id }}" id="cust_id">
-                                    <input type="hidden" name="cust_name" value="{{ $item->full_name }}" id="cust_id">
-                                    <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
-                                        id="booking_id">
-                                    <button type="submit" class="btn btn-xs btn-outline-primary" style="padding: 2px;">
-                                        <i class='bx bx-pen'></i> Modify
-                                    </button>
-                                </form>
+                                @if ($item->is_delivered == 'Y')
+                                <i class='bx bx-block text-xs text-danger'></i>
+                                @else
+                                    <form action="{{ route('admin.user.order.modify') }}" method="GET">
+                                        @csrf
+                                        <input type="hidden" name="cust_id" value="{{ $item->cust_id }}" id="cust_id">
+                                        <input type="hidden" name="cust_name" value="{{ $item->full_name }}"
+                                            id="cust_id">
+                                        <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
+                                            id="booking_id">
+                                        <button type="submit" class="btn btn-xs btn-outline-primary" style="padding: 2px;">
+                                            <i class='bx bx-pen'></i> Modify
+                                        </button>
+                                    </form>
+                                @endif
+
                             </td>
                             <td>
                                 <form action="{{ route('order.billing') }}" method="POST">
