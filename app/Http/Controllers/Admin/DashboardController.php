@@ -23,6 +23,7 @@ class DashboardController extends Controller
     public function index()
     {
         // get session data
+        Session::forget('inventory');
         $userName = Session::get('name');
         $userRoles = Session::get('roles');
         foreach ($userRoles as $role) {
