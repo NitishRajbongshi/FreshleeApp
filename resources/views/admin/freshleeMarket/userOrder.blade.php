@@ -67,8 +67,7 @@
                     @csrf
                     <input type="hidden" id="start_date" name="start_date" value="{{ $first }}">
                     <input type="hidden" id="end_date" name="end_date" value="{{ $today }}">
-                    <button type="submit"
-                        class="btn btn-md text-xs btn-outline-none text-danger text-decoration-underline">
+                    <button type="submit" class="btn btn-md text-xs btn-outline-none text-danger text-decoration-underline">
                         Order History
                     </button>
                 </form>
@@ -120,8 +119,7 @@
                                         <img src="{{ asset('admin_assets\img\gif\loader.gif') }}" alt="loader"
                                             width="22px;">Calculating..
                                     </p>
-                                    <p id="{{ $item->booking_ref_no }}_price_tab" style="display: none;"
-                                        class="fw-bold ms-1">
+                                    <p id="{{ $item->booking_ref_no }}_price_tab" style="display: none;" class="fw-bold ms-1">
                                         Rs. <span id="{{ $item->booking_ref_no }}_total_price"></span>
                                     </p>
                                 </div>
@@ -131,15 +129,15 @@
                             </td>
                             <td>
                                 @if ($item->is_delivered == 'Y')
-                                <i class='bx bx-block text-xs text-danger'></i>
+                                    <i class='bx bx-block text-xs text-danger'></i>
                                 @else
                                     <form action="{{ route('admin.user.order.modify') }}" method="GET">
                                         @csrf
                                         <input type="hidden" name="cust_id" value="{{ $item->cust_id }}" id="cust_id">
-                                        <input type="hidden" name="cust_name" value="{{ $item->full_name }}"
-                                            id="cust_id">
-                                        <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
-                                            id="booking_id">
+                                        <input type="hidden" name="cust_name" value="{{ $item->full_name }}" id="cust_id">
+                                        <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}" id="booking_id">
+                                        <input type="hidden" name="hdn_zone_cd" value="{{ $picupAddress->zone_cd }}"
+                                            id="hdn_zone_cd">
                                         <button type="submit" class="btn btn-xs btn-outline-primary" style="padding: 2px;">
                                             <i class='bx bx-pen'></i> Modify
                                         </button>
@@ -153,10 +151,8 @@
                                     <input type="hidden" name="cust_id" value="{{ $item->cust_id }}" id="cust_id">
                                     <input type="hidden" name="cust_name" value="{{ $item->full_name }}" id="cust_name">
                                     <input type="hidden" name="cust_phone" value="{{ $item->phone_no }}" id="cust_phone">
-                                    <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}"
-                                        id="booking_id">
-                                    <input type="hidden" name="order_items" value="{{ $item->order_items }}"
-                                        id="order_items">
+                                    <input type="hidden" name="booking_id" value="{{ $item->booking_ref_no }}" id="booking_id">
+                                    <input type="hidden" name="order_items" value="{{ $item->order_items }}" id="order_items">
                                     <button type="submit" class="btn btn-xs btn-outline-primary" style="padding: 2px;">
                                         <i class='bx bx-add-to-queue'></i> Generate
                                     </button>
@@ -165,17 +161,16 @@
                             <td style="display: none; overflow-wrap: break-word; white-space: normal;">
                                 {{ $item->booking_ref_no }}
                             </td>
-                            {{--  // Place to Add back the delivery update code
+                            {{-- // Place to Add back the delivery update code
 
-                                    <td>
-                                         <a href="#" class="btn btn-xs py-1 btn-outline-primary edit-btn" data-bs-toggle="modal"
-                                             data-bs-target="#editModal" data-booking-id="{{ $item->booking_ref_no }}"
-                                             data-customer-name="{{ $item->full_name }}"
-                                             data-delivery-status="{{ $item->is_delivered }}"
-                                             data-delivery-at="{{ $item->delivered_at != null ? $item->delivered_at : $today }}">
-                                             <i class="tf-icons bx bx-edit"></i> Update
-                                         </a>
-                                     </td>
+                            <td>
+                                <a href="#" class="btn btn-xs py-1 btn-outline-primary edit-btn" data-bs-toggle="modal"
+                                    data-bs-target="#editModal" data-booking-id="{{ $item->booking_ref_no }}"
+                                    data-customer-name="{{ $item->full_name }}" data-delivery-status="{{ $item->is_delivered }}"
+                                    data-delivery-at="{{ $item->delivered_at != null ? $item->delivered_at : $today }}">
+                                    <i class="tf-icons bx bx-edit"></i> Update
+                                </a>
+                            </td>
 
                             --}}
                         </tr>
@@ -226,30 +221,30 @@
 
 @section('custom_js')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Auto-hide success alert
             var successAlert = document.getElementById('successAlert');
             if (successAlert) {
-                setTimeout(function() {
+                setTimeout(function () {
                     successAlert.style.transition = 'opacity 0.5s ease-out';
                     successAlert.style.opacity = '0';
-                    setTimeout(function() {
+                    setTimeout(function () {
                         successAlert.remove();
                     }, 500);
                 }, 5000);
             }
 
             // Initialize DataTables after the DOM is fully loaded
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $('#tblUser').DataTable();
                 $('#itemsTable').DataTable();
             });
         });
 
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             // Price calculation
-            $('.price_btn').on('click', function() {
+            $('.price_btn').on('click', function () {
                 const bookingId = $(this).data('ref_id');
                 const loaderGif = $(`#${bookingId}_loader_gif`);
                 const priceTab = $(`#${bookingId}_price_tab`);
@@ -265,7 +260,7 @@
                         _token: "{{ csrf_token() }}",
                         booking_id: bookingId
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.status === 'success') {
                             totalPriceElement.text(response.total_price);
                             loaderGif.hide();
@@ -276,7 +271,7 @@
                             priceTab.show();
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error("AJAX Error:", xhr, status, error);
                         totalPriceElement.text('Error!');
                         loaderGif.hide();
@@ -290,7 +285,7 @@
             });
 
             // Edit Modal
-            $('#editModal').on('show.bs.modal', function(event) {
+            $('#editModal').on('show.bs.modal', function (event) {
                 const button = $(event.relatedTarget);
                 const bookingID = button.data('booking-id');
                 const customerName = button.data('customer-name');
@@ -311,7 +306,7 @@
                 }
             });
 
-            $('#delivery_status').on('change', function() {
+            $('#delivery_status').on('change', function () {
                 if ($(this).val() === 'Y') {
                     $('#delivery_date').show();
                 } else {

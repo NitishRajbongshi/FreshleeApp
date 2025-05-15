@@ -11,12 +11,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Services\ProxyOrderService;
+use App\Services\UserService;
 class ItemReportController extends Controller
 {
-    public function __construct()
+    protected $userService;
+    protected $proxyOrderService;
+    public function __construct(UserService $userService, ProxyOrderService $proxyOrderService)
     {
         Log::info('ItemReportController Initialized');
+        $this->userService = $userService;
+        $this->proxyOrderService = $proxyOrderService;
     }
 
     public function index()
@@ -81,7 +86,8 @@ class ItemReportController extends Controller
         try {
             // get the neccessary dates
             $user = Auth::user();
-            $today = Carbon::today()->toDateString();;
+            $today = Carbon::today()->toDateString();
+            ;
             $start = Carbon::now()->startOfWeek(Carbon::MONDAY)->toDateString();
             $first = Carbon::now()->startOfMonth()->toDateString();
             $data = DB::table('smartag_market.tbl_customer_booking_details')
@@ -118,17 +124,18 @@ class ItemReportController extends Controller
                     'smartag_market.tbl_user_login.full_name',
                     'smartag_market.tbl_user_login.phone_no',
                     'smartag_market.tbl_user_address.address_line1',
+                    'smartag_market.tbl_user_address.zone_cd',
                     DB::raw("JSON_AGG(
-                JSON_BUILD_OBJECT(
-                    'item_cd', smartag_market.tbl_customer_booking_details.item_cd,
-                    'item_name', smartag_market.tbl_item_master.item_name,
-                    'item_unit', smartag_market.tbl_item_master.unit_min_order_qty,
-                    'item_price_in_unit', smartag_market.tbl_item_master.item_price_in,
-                    'item_quantity', smartag_market.tbl_customer_booking_details.item_quantity,
-                    'qty_unit', smartag_market.master_item_units.unit_cd,
-                    'qty_unit_desc', smartag_market.master_item_units.unit_desc
-                )
-            ) AS order_items")
+                        JSON_BUILD_OBJECT(
+                        'item_cd', smartag_market.tbl_customer_booking_details.item_cd,
+                        'item_name', smartag_market.tbl_item_master.item_name,
+                        'item_unit', smartag_market.tbl_item_master.unit_min_order_qty,
+                        'item_price_in_unit', smartag_market.tbl_item_master.item_price_in,
+                        'item_quantity', smartag_market.tbl_customer_booking_details.item_quantity,
+                        'qty_unit', smartag_market.master_item_units.unit_cd,
+                        'qty_unit_desc', smartag_market.master_item_units.unit_desc
+                        )
+                    ) AS order_items")
                 )
                 ->whereBetween(DB::raw('DATE(smartag_market.tbl_customer_booking_details.order_date)'), [$start, $today])
                 ->groupBy(
@@ -139,9 +146,10 @@ class ItemReportController extends Controller
                     'smartag_market.tbl_customer_booking_details.delivered_at',
                     'smartag_market.tbl_user_login.full_name',
                     'smartag_market.tbl_user_login.phone_no',
-                    'smartag_market.tbl_user_address.address_line1'
+                    'smartag_market.tbl_user_address.address_line1',
+                    'smartag_market.tbl_user_address.zone_cd'
                 )
-                ->orderBy('smartag_market.tbl_customer_booking_details.order_date', 'desc')
+                ->orderBy('smartag_market.tbl_customer_booking_details.order_date', 'asc')
                 ->get();
 
             $itemCounts = DB::table('smartag_market.tbl_customer_booking_details')
@@ -177,7 +185,7 @@ class ItemReportController extends Controller
                 ->get();
 
             $picupAddress = DB::table("smartag_market.tbl_default_delivery_address")
-                ->select('address_line1', 'address_line2', 'state_cd', 'district_cd', 'pin_code', 'latitude', 'longitude')
+                ->select('address_line1', 'address_line2', 'state_cd', 'district_cd', 'pin_code', 'zone_cd', 'latitude', 'longitude')
                 ->get()
                 ->first();
 
@@ -327,7 +335,7 @@ class ItemReportController extends Controller
 
             foreach ($data as $item) {
                 $chartLabels[] = $item->item_name; // Labels for the pie chart
-                $chartData[] = (float)$item->total_quantity; // Values for the pie chart
+                $chartData[] = (float) $item->total_quantity; // Values for the pie chart
             }
             return view('admin.freshleeMarket.orderReport.orderReport', [
                 'data' => $data,
@@ -386,7 +394,7 @@ class ItemReportController extends Controller
 
             foreach ($data as $item) {
                 $chartLabels[] = $item->item_name; // Labels for the pie chart
-                $chartData[] = (float)$item->total_quantity; // Values for the pie chart
+                $chartData[] = (float) $item->total_quantity; // Values for the pie chart
             }
             return view('admin.freshleeMarket.orderReport.reportHistory', [
                 'data' => $data,
@@ -564,6 +572,7 @@ class ItemReportController extends Controller
         $customer_name = $request->cust_name;
         $booking_id = $request->booking_id;
         $itemUnits = MasterItemUnit::all();
+        $zone_cd = $request->hdn_zone_cd;
         $items = DB::table("smartag_market.tbl_item_master")
             ->select('item_cd', 'item_name', 'min_qty_to_order', 'unit_min_order_qty')
             ->orderBy('item_name', 'asc')->get();
@@ -586,6 +595,8 @@ class ItemReportController extends Controller
             ->where('booking.booking_ref_no', $booking_id)
             ->orderBy('item.item_name', 'asc')
             ->get();
+
+        // Log::info("zone_cd XXXXXXXXXXXXXXXXX: ", $zone_cd);
         return view('admin.freshleeMarket.modifyOrder', [
             'user' => $user,
             'items' => $items,
@@ -594,6 +605,7 @@ class ItemReportController extends Controller
             'booking_id' => $booking_id,
             'user_orders' => $user_orders,
             'itemUnits' => $itemUnits,
+            'zone_cd' => $zone_cd
         ]);
     }
 
@@ -602,16 +614,41 @@ class ItemReportController extends Controller
         Log::info('Request method: ' . $request->method());
         $item_id = $request->item_id;
         $item_cd = $request->item_cd;
+        $zone_cd = $request->zncd;
         $booking_id = $request->booking_id;
         $item_quantity = $request->item_quantity;
         $item_unit = $request->item_unit;
         try {
+            $item_price = 0;
+            $itemPricesResponse = $this->proxyOrderService->getPriceListZoneWiseCustomerWithZoneCD($zone_cd);
+            if ($itemPricesResponse['status']) {
+                $items_prices = $itemPricesResponse['sale_price_data'];
+                $item_price = collect($items_prices)->firstWhere('item_cd', $request->item_cd)['customers_sale_price_per_1kg'];
+            }
+
+
+
+            if ($item_unit == "gm") {
+                $item_quantity = $item_quantity / 1000;
+                $item_unit = "kg";
+
+            }
+
+            if ($item_unit == "ml") {
+                $item_quantity = $item_quantity / 1000;
+                $item_unit = "lt";
+            }
+
+            $price = $item_quantity * $item_price;
+
+
             $data = DB::table('smartag_market.tbl_customer_booking_details')
                 ->where('booking_ref_no', $booking_id)
                 ->where('id', $item_id)
                 ->update([
                     'item_quantity' => $item_quantity,
                     'qty_unit' => $item_unit,
+                    'price' => $price
                 ]);
             return redirect()->back()->with('success', 'Order updated successfully.');
         } catch (\Exception $e) {
@@ -634,9 +671,48 @@ class ItemReportController extends Controller
             $booking_id = $request->booking_id;
             $bookingDetails = DB::table("smartag_market.tbl_customer_booking_details")
                 ->where("booking_ref_no", $booking_id)
-                ->select('cust_id', 'order_date', 'zone_cd', 'is_delivered', 'delivery_address_cd', 'pin_code', 'status_cd', 'assigned_farmers_id', 'req_ack_no', 'is_harvested', 'delivered_by', 'delivered_at')
+                ->select(
+                    'cust_id',
+                    'order_date',
+                    'zone_cd',
+                    'is_delivered',
+                    'delivery_address_cd',
+                    'pin_code',
+                    'status_cd',
+                    'assigned_farmers_id',
+                    'req_ack_no',
+                    'is_harvested',
+                    'delivered_by',
+                    'delivered_at'
+                )
                 ->get()->first();
+
+
             if ($bookingDetails) {
+                $item_price = 0;
+                $itemPricesResponse = $this->proxyOrderService->getPriceListZoneWiseCustomerWithZoneCD($bookingDetails->zone_cd);
+                if ($itemPricesResponse['status']) {
+                    $items_prices = $itemPricesResponse['sale_price_data'];
+                    Log::info("items_prices:: ", $items_prices);
+                    Log::info($request->item_cd);
+                    Log::info(collect($items_prices)->firstWhere('item_cd', trim($request->item_cd)));
+                    $item_price = collect($items_prices)->firstWhere('item_cd', $request->item_cd)['customers_sale_price_per_1kg'];
+                }
+
+                $qty = $request->item_quantity;
+                $qty_unit = $request->qty_unit;
+                if ($request->qty_unit == "gm") {
+                    $qty = $qty / 1000;
+                    $qty_unit = "kg";
+
+                }
+
+                if ($request->qty_unit == "ml") {
+                    $qty = $qty / 1000;
+                    $qty_unit = "lt";
+                }
+
+                $price = $qty * $item_price;
                 $data = [
                     'cust_id' => $bookingDetails->cust_id,
                     'order_date' => $bookingDetails->order_date,
@@ -647,13 +723,14 @@ class ItemReportController extends Controller
                     'pin_code' => $bookingDetails->pin_code,
                     'status_cd' => $bookingDetails->status_cd,
                     'item_cd' => $request->item_cd,
-                    'item_quantity' => $request->item_quantity,
+                    'item_quantity' => $qty,
                     'assigned_farmers_id' => $bookingDetails->assigned_farmers_id,
                     'req_ack_no' => $bookingDetails->req_ack_no,
                     'is_harvested' => $bookingDetails->is_harvested,
                     'delivered_by' => $bookingDetails->delivered_by,
                     'delivered_at' => $bookingDetails->delivered_at,
-                    'qty_unit' => $request->qty_unit,
+                    'qty_unit' => $qty_unit,
+                    'price' => $price,
                 ];
                 // insert a new item in the same booking id
                 $insertStatus = DB::table("smartag_market.tbl_customer_booking_details")->insertGetId($data);
@@ -700,7 +777,8 @@ class ItemReportController extends Controller
 
     public function downloadWeeklyReport(Request $reuest)
     {
-        $today = Carbon::today()->toDateString();;
+        $today = Carbon::today()->toDateString();
+        ;
         $start = Carbon::now()->startOfWeek(Carbon::MONDAY)->toDateString();
         $first = Carbon::now()->startOfMonth()->toDateString();
         $itemCounts = DB::table('smartag_market.tbl_customer_booking_details')
