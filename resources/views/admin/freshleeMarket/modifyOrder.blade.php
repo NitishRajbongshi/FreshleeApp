@@ -116,12 +116,15 @@
                                         <form action="{{ route('admin.user.order.update') }}" method="POST"
                                             class="d-flex gap-1">
                                             @csrf
+                                             <input type="hidden" class="form-control form-control-sm" name="zncd"
+                                                value="{{ $zone_cd }}">
                                             <input type="hidden" class="form-control form-control-sm" name="item_id"
                                                 value="{{ $order->id }}">
                                             <input type="hidden" class="form-control form-control-sm" name="item_cd"
                                                 value="{{ $order->item_cd }}">
                                             <input type="hidden" class="form-control form-control-sm" name="booking_id"
                                                 value="{{ $order->booking_ref_no }}">
+                                               
                                             <input type="number" step="0.01" class="form-control form-control-sm"
                                                 name="item_quantity" value="{{ $order->item_quantity }}" required>
                                             <select class="form-select form-select-sm" name="item_unit">

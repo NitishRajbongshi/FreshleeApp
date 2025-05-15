@@ -22,6 +22,29 @@ class ProxyOrderService
     /**
      * Get user address by UID.
      */
+
+    public function getPriceListZoneWiseCustomerWithZoneCD($zone_cd)
+    {
+        try {
+            $url = $this->itemPriceZoneWiseCustomer;
+            $params = [
+                'zone_cd' => $zone_cd,
+            ];
+            $accessToken = $this->loginService->getAccessToken(); // Reusing getAccessToken
+            $response = Http::withHeaders([
+                'x-access-token' => $accessToken,
+                'Content-Type' => 'application/json',
+            ])->get($url, $params);
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            throw new \Exception("Failed to fetch item list! Response: " . $response->body());
+        } catch (\Exception $e) {
+            Log::error('Error fetching item list:', ['error' => $e->getMessage()]);
+            return ['status' => false, 'message' => 'Failed to fetch item list.'];
+        }
+    }
     public function getPriceListZoneWiseCustomer($pin)
     {
         try {

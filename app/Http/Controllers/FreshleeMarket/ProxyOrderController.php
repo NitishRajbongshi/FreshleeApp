@@ -65,7 +65,7 @@ class ProxyOrderController extends Controller
             $message = 'Failed to fetched Item List';
             $items = [];
         }
-
+        Log::info('Item Prices:', $items);
         // if route has item cd 
         $cart = Session::get('cart', []);
         $userCart = Session::get('UserCart', []);
@@ -87,20 +87,22 @@ class ProxyOrderController extends Controller
             ];
 
             // convert qty to API supported units 
-            if(($item_min_unit == 'kg') || ($item_min_unit == 'ltr')) {
+            if (($item_min_unit == 'kg') || ($item_min_unit == 'ltr')) {
                 $item_min_qty = $item_min_qty * 1000;
             }
-            if(($item_unit == 'kg') || ($item_unit == 'ltr')) {
+            if (($item_unit == 'kg') || ($item_unit == 'ltr')) {
                 $item_qty = $item_qty * 1000;
             }
             $unit = $item_qty / $item_min_qty;
             Log::info("unit: " . $unit);
-
+            $item_price = collect($items)
+                ->firstWhere('item_cd', $item_cd)['customers_sale_price_per_1kg'] ?? 0;
             $cart[] = [
                 'item_cd' => $item_cd,
-                'qty' => $unit
+                'qty' => $unit,
+                'item_price' => $item_price
             ];
-           
+
             Session::put('cart', $cart);
             Session::put('UserCart', $userCart);
         }
@@ -131,7 +133,8 @@ class ProxyOrderController extends Controller
             'delivery_address_cd' => $request->input('address'),
             'order_dtls' => Session::get('cart', [])
         ];
-        $apiUrl = "http://43.205.45.246:8082/agriMarket/bookCustomersOrder";
+        // $apiUrl = "http://43.205.45.246:8082/agriMarket/bookCustomersOrder";
+        $apiUrl = config('customconfig.PLACE_ORDER');
         // Send POST request
         $response = Http::withHeaders([
             'x-access-token' => Session::get('accessToken')
