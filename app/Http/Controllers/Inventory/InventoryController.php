@@ -19,14 +19,20 @@ class InventoryController extends Controller
     {
         try {
             $inventory = Session::get('inventory', []);
+            $expenditure = Session::get('expenditure', []);
             $items = DB::table('smartag_market.tbl_item_master')
                 ->select('item_cd', 'item_name', 'item_price_in')
+                ->get();
+            $expenditureList = DB::table('smartag_market.master_expenditure_types')
+                ->select('exp_cd', 'exp_desc')
                 ->get();
             $itemUnits = MasterItemUnit::all();
             return view('admin.storeInventory.index', [
                 'items' => $items,
+                'expenditureList' => $expenditureList,
                 'itemUnits' => $itemUnits,
-                'inventory' => $inventory
+                'inventory' => $inventory,
+                'expenditure' => $expenditure
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), [
@@ -37,15 +43,18 @@ class InventoryController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function itemCart(Request $request)
     {
         try {
-            $inventory = Session::get('inventory', []);
             $items = DB::table('smartag_market.tbl_item_master')
                 ->select('item_cd', 'item_name', 'item_price_in')
                 ->get();
+            $expenditureList = DB::table('smartag_market.master_expenditure_types')
+                ->select('exp_cd', 'exp_desc')
+                ->get();
             $itemUnits = MasterItemUnit::all();
             $inventory = Session::get('inventory', []);
+            $expenditure = Session::get('expenditure', []);
             if ($request->has('item_cd')) {
                 $inventory[] = [
                     'purchase_id' => 'fjksfjksjskjfks',
@@ -63,8 +72,49 @@ class InventoryController extends Controller
             }
             return view('admin.storeInventory.index', [
                 'items' => $items,
+                'expenditureList' => $expenditureList,
                 'itemUnits' => $itemUnits,
-                'inventory' => $inventory
+                'inventory' => $inventory,
+                'expenditure' => $expenditure
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return view('errors.generic');
+        }
+    }
+
+    public function expdCart(Request $request)
+    {
+        try {
+            $items = DB::table('smartag_market.tbl_item_master')
+                ->select('item_cd', 'item_name', 'item_price_in')
+                ->get();
+            $expenditureList = DB::table('smartag_market.master_expenditure_types')
+                ->select('exp_cd', 'exp_desc')
+                ->get();
+            $itemUnits = MasterItemUnit::all();
+            $inventory = Session::get('inventory', []);
+            $expenditure = Session::get('expenditure', []);
+            if ($request->has('exp_cd')) {
+                $expenditure[] = [
+                    'purchase_id' => 'fjksfjksjskjfks',
+                    'exp_cd' => $request->input('exp_cd'),
+                    'exp_desc' => "Food",
+                    'expense' => $request->input('expense'),
+                ];
+                Log::info("Expenditure: ", $expenditure);
+                Session::put('expenditure', $expenditure);
+                Log::info("Expenditure List: ", Session::get('expenditure'));
+            }
+            return view('admin.storeInventory.index', [
+                'items' => $items,
+                'expenditureList' => $expenditureList,
+                'itemUnits' => $itemUnits,
+                'inventory' => $inventory,
+                'expenditure' => $expenditure
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), [

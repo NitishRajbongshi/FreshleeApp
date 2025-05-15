@@ -60,7 +60,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
 
     // manage inventory
     Route::get('inventory', [InventoryController::class, 'index'])->name('admin.inventory');
-    Route::post('inventory/store', [InventoryController::class, 'store'])->name('admin.inventory.store');
+    Route::post('inventory/item/cart', [InventoryController::class, 'itemCart'])->name('admin.inventory.item.cart');
+    Route::post('inventory/expd/cart', [InventoryController::class, 'expdCart'])->name('admin.inventory.expd.cart');
 });
 
 // End of freshlee routes
