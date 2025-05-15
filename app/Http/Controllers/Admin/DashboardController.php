@@ -24,6 +24,7 @@ class DashboardController extends Controller
     {
         // get session data
         Session::forget('inventory');
+        Session::forget('expenditure');
         $userName = Session::get('name');
         $userRoles = Session::get('roles');
         foreach ($userRoles as $role) {

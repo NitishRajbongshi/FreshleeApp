@@ -15,7 +15,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <p class="text-danger border border-danger p-2:">This module is under development phase. Please do not perform any operation</p>
+    <p class="text-danger border border-danger p-2:">This module is under development phase. Please do not perform any
+        operation</p>
     <div class="row justify-content-between">
         <div class="col-12 col-md-7 mt-1">
             <div class="card" id="user_info_container">
@@ -26,7 +27,7 @@
                     </h5>
                 </div>
                 <div class="card-body row px-4 pb-2 text-sm">
-                    <form action="{{ route('admin.inventory.store') }}" method="POST" autocomplete="off"
+                    <form action="{{ route('admin.inventory.item.cart') }}" method="POST" autocomplete="off"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="row">
@@ -143,18 +144,22 @@
                 </div>
             </div>
             {{-- List all cart items --}}
-            <div class="card" id="user_info_container">
-                <div class="card-header">
-                    <h5 class="text-md lh-1">Store Inventory
-                        <br>
-                        <span class="text-xs text-info">Add items to the inventory</span>
-                    </h5>
-                </div>
-                <div class="card-body row px-4 pb-2 text-sm">
-                    @if (count($inventory) == 0)
-                        <p class="text-warning">No item added!!</p>
-                    @else
-                        <p class="text-primary"><i class='bx bx-cart-download'></i>Item List</p>
+            <div class="card mt-2" id="user_info_container">
+                @if (count($inventory) == 0)
+                    <div class="card-header">
+                        <h5 class="text-md lh-1">Inventory List is Empty!
+                            <br>
+                            <span class="text-xs text-info">No item added in the list.</span>
+                        </h5>
+                    </div>
+                @else
+                    <div class="card-header">
+                        <h5 class="text-md lh-1">Item in the Inventory
+                            <br>
+                            <span class="text-xs text-info">List of item added in the inventory.</span>
+                        </h5>
+                    </div>
+                    <div class="card-body row px-4 pb-2 text-sm">
                         <div class="mb-1 text-end">
                             <button class="btn btn-sm btn-danger">
                                 <i class="tf-icons bx bxs-trash me-1 text-xs"></i>Clear All
@@ -170,19 +175,15 @@
                                 </li>
                             @endforeach
                         </ul>
-                        {{-- <div class="my-2">
-                    <form action="{{ route('admin.place.order') }}" method="POST">
-                        @csrf
-                        <input type="hidden" id="cust_name" name="name" value="{{ $customer_name }}">
-                        <input type="hidden" id="cust_phone" name="phone" value="{{ $customer_phone }}">
-                        <input type="hidden" id="cust_pin" name="pin" value="{{ $customer_pin }}">
-                        <input type="hidden" id="cust_addr" name="address" value="{{ $customer_address }}">
-                        <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Click OK to confirm order')">Confirm Order</button>
-                    </form>
-                </div> --}}
-                    @endif
-                </div>
+                        <div class="my-2" style="text-align: right;">
+                            <form action="{{ route('admin.place.order') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Click OK to confirm order')">Confirm & Save</button>
+                            </form>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
         <div class="col-12 col-md-5 mt-1">
@@ -212,24 +213,75 @@
                     Add expenditure
                 </div>
                 <div class="card-body px-4 pb-4 text-sm">
-                    <form action="{{ route('admin.order.report.history') }}" method="POST">
+                    <form action="{{ route('admin.inventory.expd.cart') }}" method="POST">
                         @csrf
-                        {{-- <div class="row align-items-end text-sm">
-                            <div class="col-12 col-md-5">
-                                <label for="start_date" class="form-label">Start Date</label>
-                                <input class="form-control form-control-sm" type="date" name="start_date">
+                        <div class="row align-items-end text-sm">
+                            <div class="mb-3 col-sm-12 col-md-6">
+                                <label class="form-label" for="exp_cd">Expenditure Type <span
+                                        class="text-xs text-danger">*</span></label>
+                                <select class="form-select form-select-sm" id="exp_cd" name="exp_cd" required>
+                                    <option value="">Select Type</option>
+                                    @foreach ($expenditureList as $item)
+                                        <option value="{{ $item->exp_cd }}" data-name="{{ $item->exp_desc }}"
+                                            {{ old('exp_cd') == $item->exp_cd ? 'selected' : '' }}>
+                                            {{ $item->exp_desc }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('exp_cd')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
-                            <div class="col-12 col-md-5">
-                                <label for="end_date" class="form-label">End Date</label>
-                                <input class="form-control form-control-sm" type="date" name="end_date">
+                            <div class="mb-3 col-sm-12 col-md-4">
+                                <label class="form-label" for="expense">Expense (Rs.)<span
+                                        class="text-xs text-danger">*</span></label>
+                                <input type="number" step="0.01" class="form-control form-control-sm" id="expense"
+                                    name="expense" placeholder="0.00" value="{{ old('expense') }}" required>
+                                @error('expense')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
-                            <div class="col-12 col-md-2">
-                                <button type="submit" class="btn btn-sm btn-primary">View</button>
+                            <div class="mb-3 col-sm-12 col-md-2 d-flex align-items-end justify-content-end">
+                                <button type="submit" class="btn btn-sm btn-primary">Add</button>
                             </div>
-                        </div> --}}
-                        <p>Expenditure form will appear here.</p>
+                        </div>
                     </form>
                 </div>
+            </div>
+
+            {{-- List all cart items --}}
+            <div class="card mt-2" id="expenditure_container">
+                @if (count($expenditure) == 0)
+                    <div class="card-header">
+                        <h5 class="text-md lh-1">Expenditure List is Empty!
+                            <br>
+                            <span class="text-xs text-info">No expenditure added in the list.</span>
+                        </h5>
+                    </div>
+                @else
+                    <div class="card-body row px-4 pb-2 text-sm">
+                        <h5 class="text-md lh-1">Expenditure List
+                            <br>
+                            <span class="text-xs text-info">List of expenditure added in the list.</span>
+                        </h5>
+                        <div class="mb-1 text-end">
+                            <button class="btn btn-sm btn-danger">
+                                <i class="tf-icons bx bxs-trash me-1 text-xs"></i>Clear All
+                            </button>
+                        </div>
+                        <ul class="list-group ps-2" style="list-style-type: none;" id="item-list">
+                            @foreach ($expenditure as $exp)
+                                <li class="list-group-item lh-1">
+                                    {{ $exp['exp_cd'] }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
 
             <div class="card mt-2">
@@ -248,7 +300,7 @@
                                 <label for="end_date" class="form-label">End Date</label>
                                 <input class="form-control form-control-sm" type="date" name="end_date">
                             </div>
-                            <div class="col-12 col-md-2">
+                            <div class="col-12 col-md-2 text-end">
                                 <button type="submit" class="btn btn-sm btn-primary">View</button>
                             </div>
                         </div>

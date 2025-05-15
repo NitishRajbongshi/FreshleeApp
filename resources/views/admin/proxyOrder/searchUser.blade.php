@@ -16,9 +16,10 @@
         </div>
     @endif
     <div class="row justify-content-between">
-        <div class="col-12 col-md-5 mt-1">
+        <div class="col-12 col-md-4 mt-1">
             <div class="card">
                 <div class="card-header lh-1">
+                    <h1><i class='bx bx-search bx-md bx-border-circle'></i></h1>
                     <h5 class="text-md lh-1">Place order for customer
                         <br>
                         <span class="text-xs text-secondary">
@@ -56,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-7 mt-1">
+        <div class="col-12 col-md-8 mt-1">
             <div class="card" id="user_info_container" style="display: none;">
                 <div class="card-header">
                     <h5 class="text-md lh-1">User Details
