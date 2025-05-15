@@ -34,6 +34,10 @@
         .total-row {
             font-weight: bold;
         }
+
+        .bottom_table {
+            border: 0px;
+        }
     </style>
 </head>
 
@@ -79,19 +83,42 @@
                 <td>Rs. {{ number_format($deliveryCharge, 2) }}</td>
             </tr>
             <tr class="total-row">
+                <td colspan="3">Bag Charge</td>
+                <td>Rs. {{ number_format($bagCharge, 2) }}</td>
+            </tr>
+            <tr class="total-row">
                 <td colspan="3">Total Amount</td>
                 <td>Rs. {{ number_format($total_amount, 2) }}</td>
             </tr>
         </tbody>
     </table>
-    <h5>Total amount: Rupees <span style="text-transform: capitalize;">{{ $amountInWords }} only.</span></h5>
-    <p style="font-size: 13px; color: rgb(63, 62, 62);">For the farmers and with the farmers</p>
-    <p style="font-size: 12px; color: rgb(63, 62, 62);">With the commitment to sustainable agriculture- Team Vidhi</p>
-    <p style="font-size: 12px; color: rgb(63, 62, 62);">Invoice Generated: {{ $date }}</p>
-    <p
-        style="font-size: 12px; color: rgb(63, 62, 62); border-top: 1px solid gray; padding-top: 4px; text-align: center;">
-        An initiative of Vidhi Agrotech Private Limited with the support from Vidhi Analytica LLP and EEL-NER under
-        ICAR, Govt. of India.</p>
+
+    <table class="bottom_table" style="width: 100%;">
+        <tr>
+            <td style="width: 90%;">
+                <h5>Total amount: Rupees <span style="text-transform: capitalize;">{{ $amountInWords }} only.</span>
+                </h5>
+                <lable style="font-size: 13px; color: rgb(63, 62, 62);">For the farmers and with the farmers</lable><br>
+                <label style="font-size: 12px; color: rgb(63, 62, 62);">With the commitment to sustainable agriculture-
+                    Team
+                    Vidhi</label></br>
+                <label style="font-size: 12px; color: rgb(63, 62, 62);">Invoice Generated: {{ $date }}</label>
+            </td>
+            <td style="width: 10%;">
+                <img src="{{ $qr_code }}" style="width: 100px; height: auto;">
+            </td>
+        </tr>
+
+    </table>
+    <div class="row col-12">
+        <p
+            style="font-size: 12px; color: rgb(63, 62, 62); border-top: 1px solid gray; padding-top: 4px; text-align: center;">
+            An initiative of Vidhi Agrotech Private Limited with the support from Vidhi Analytica LLP and EEL-NER
+            under
+            ICAR, Govt. of India.
+        </p>
+    </div>
+
 </body>
 
 </html>

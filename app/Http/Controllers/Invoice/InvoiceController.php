@@ -18,10 +18,12 @@ class InvoiceController extends Controller
         $selectedItems = $request->input('items', []);
         Log::info($selectedItems);
         $deliveryCharge = $request->input('hdnDeliveryCharge');
+        $bagCharge = $request->input('hdnBagCharge');
         $totalAmount = $request->input('total_amount');
         $amountInWords = $this->numberToWords($totalAmount);
         // get logo from public folder
         $logo = public_path('admin_assets/img/favicon/banner.png');
+        $payment_qr_code = public_path('admin_assets/img/Freshlee_Payment_QR_Code.png');
         $data = [
             'booking_id' => $bookingId,
             'date' => date('Y-m-d'),
@@ -29,9 +31,11 @@ class InvoiceController extends Controller
             'customer_phone' => $customerPhone,
             'items' => $selectedItems,
             'deliveryCharge' => $deliveryCharge,
+            'bagCharge' => $bagCharge,
             'total_amount' => $totalAmount,
             'amountInWords' => $amountInWords,
-            'logo' => $logo
+            'logo' => $logo,
+            'qr_code' => $payment_qr_code
         ];
 
         $custName = str_replace(' ', '_', strtolower($customerName));

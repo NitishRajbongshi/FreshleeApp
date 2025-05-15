@@ -38,13 +38,14 @@
                 <div class="col-12 col-md-6 text-sm">
                     <h5 class="text-md">Ordered Item List</h5>
                     <form id="itemForm">
-                    
                         <div class="my-2 text-danger">
-                            <input type="checkbox" id="ckbCheckAll" /> Select all items
                             <input type="checkbox" id="ckbDeliveryChargeFifty"  value="50" onclick="toggleCheckbox(this, 'ckbDeliveryChargeSeventyFive')"/> Delivery Charge Rs.50
                             <input type="checkbox" id="ckbDeliveryChargeSeventyFive" value="75" onclick="toggleCheckbox(this, 'ckbDeliveryChargeFifty')"/> Delivery Charge Rs.75
+                            <input type="checkbox" id="ckbShoppingBag" value="30"/> Shopping Bag Rs.30
                         </div>
-                        
+                        <div class="my-2 text-danger">
+                            <input type="checkbox" id="ckbCheckAll" /> Select all items
+                        </div>
                         
                         <ul class="list-group" style="list-style-type: none;" id="item-list">
                             @if (empty($priceList))
@@ -108,6 +109,10 @@
                             <th id="txtDeliveryCharge" class="p-1 text-end pe-3 text-sm">Rs. 0</th>
                         </tr>
                         <tr class="">
+                            <th colspan="3" class="p-1 text-end pe-3 text-sm">Shopping Bag Charge</th>
+                            <th id="txtShoppingCharge" class="p-1 text-end pe-3 text-sm">Rs. 0</th>
+                        </tr>
+                        <tr class="">
                             <th colspan="3" class="p-1 text-end pe-3 text-sm">Total Amount</th>
                             <th id="totalAmount" class="p-1 text-end pe-3 text-sm">Rs. 0</th>
                         </tr>
@@ -120,6 +125,7 @@
                 <input type="hidden" name="customer_name" value="{{ $cust_name }}">
                 <input type="hidden" name="customer_phone" value="{{ $cust_phone }}">
                 <input type="hidden" name="hdnDeliveryCharge" id ="hdnDeliveryCharge" value="">
+                <input type="hidden" name="hdnBagCharge" id ="hdnBagCharge" value="">
                 <input type="hidden" name="total_amount" id="total_amount">
                 <div id="selectedItemsContainer"></div>
                 <div style="text-align: right;">
@@ -217,15 +223,21 @@
                     `);
                 });
                 var delvCharge = 0;
+                var bagCharge = 0;
                 if($("#ckbDeliveryChargeFifty").is(":checked"))
                     delvCharge = parseFloat($("#ckbDeliveryChargeFifty").val());
                 
                 if($("#ckbDeliveryChargeSeventyFive").is(":checked"))
                     delvCharge = parseFloat($("#ckbDeliveryChargeSeventyFive").val());
+
+                if($("#ckbShoppingBag").is(":checked"))
+                bagCharge = parseFloat($("#ckbShoppingBag").val());
                 
                 $('#txtDeliveryCharge').text("Rs." + delvCharge);
+                $('#txtShoppingCharge').text("Rs." + bagCharge);
                 $('#invoiceForm #hdnDeliveryCharge').text("Rs." + delvCharge); 
-                totalAmount = totalAmount + delvCharge;
+                $('#invoiceForm #hdnBagCharge').text("Rs." + bagCharge); 
+                totalAmount = totalAmount + delvCharge + bagCharge;
                 $('#totalAmount').text(`Rs. ${totalAmount.toFixed(2)}`);
                 $('#billDetails').removeClass('d-none').show();
             }
@@ -325,14 +337,19 @@
                 });
 
                 var delvCharge = 0;
+                var bagCharge = 0;
                 if($("#ckbDeliveryChargeFifty").is(":checked"))
                     delvCharge = parseFloat($("#ckbDeliveryChargeFifty").val());
                 
                 if($("#ckbDeliveryChargeSeventyFive").is(":checked"))
                     delvCharge = parseFloat($("#ckbDeliveryChargeSeventyFive").val());
+
+                if($("#ckbShoppingBag").is(":checked"))
+                    bagCharge = parseFloat($("#ckbShoppingBag").val());
                 
                 $('#invoiceForm #hdnDeliveryCharge').val(delvCharge); 
-                totalAmount = totalAmount + delvCharge;
+                $('#invoiceForm #hdnBagCharge').val(bagCharge);
+                totalAmount = totalAmount + delvCharge + bagCharge;
 
                 $('#total_amount').val(totalAmount.toFixed(2));
             }
