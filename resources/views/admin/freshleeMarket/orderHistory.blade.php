@@ -15,8 +15,7 @@
                     </div>
                     <div class="col-12 col-md-3">
                         <label for="end_date" class="form-label">End Date</label>
-                        <input class="form-control form-control-sm" type="date" name="end_date"
-                            value="{{ $today ?? '' }}">
+                        <input class="form-control form-control-sm" type="date" name="end_date" value="{{ $today ?? '' }}">
                     </div>
                     <div class="col-12 col-md-3">
                         <button type="submit" class="btn btn-sm btn-primary">View History</button>
@@ -44,7 +43,7 @@
                         <th>Ordered Date</th>
                         <th>Item + Quantity</th>
                         <th>Order Status</th>
-                        <th style="display: none;">Order Info</th>
+                        <th>Invoice</th>
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
@@ -73,9 +72,22 @@
                                 </ol>
                             </td>
                             <td style="overflow-wrap: break-word; white-space: normal;">
-                                {{ $item->is_delivered == 'Y' ? 'Delivered' : 'Pending' }}</td>
-                            <td style="display: none; overflow-wrap: break-word; white-space: normal;">
-                                {{ $item->booking_ref_no }}</td>
+                                {{ $item->is_delivered == 'Y' ? 'Delivered' : 'Pending' }}
+                            </td>
+                            <td style="overflow-wrap: break-word; white-space: normal;">
+                                <form action="{{ route('generate.history.invoice') }}" method="POST" id="invoiceForm">
+                                    @csrf
+                                    <input type="hidden" name="booking-id" id="booking-id"
+                                        value="{{ $item->booking_ref_no }}" />
+                                    <input type="hidden" name="cust-name" id="cust-name" value="{{ $item->full_name }}" />
+                                    <input type="hidden" name="zcd" id="zcd" value="Z5" />
+                                    <input type="hidden" name="cust-addr" id="cust-addr" value="{{ $item->address_line1 }}" />
+                                    <input type="hidden" name="ph-no" id="ph-no" value="{{ $item->phone_no }}" />
+                                    <button type="submit" name="btnHistoryInvoice" id="btnHistoryInvoice">Download Invoice
+                                    </button>
+                                </form>
+
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -102,6 +114,37 @@
 
         $(document).ready(function() {
             $('#tblUser').DataTable();
+
+            $('.dnldInvoice').on('click', function () {
+                var order_id = $(this).data('booking-id');
+                var cust_name = $(this).data('cust-name');
+                var cust_ph_no = $(this).data('ph-no');
+                var cust_addr = $(this).data('cust-addr');
+                $.ajax({
+                    url: "{{ route('generate.history.invoice') }}",
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    data: {
+                        booking_id: order_id,
+                        customer_name: cust_name,
+                        customer_phone: cust_ph_no,
+                        customer_address: cust_addr
+                    },
+                    success: function (response) {
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred. Please try again.',
+                            'error'
+                        );
+                        console.error(xhr.responseText);
+                    }
+                });
+            })
         });
     </script>
 @endsection

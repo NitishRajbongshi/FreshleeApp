@@ -259,6 +259,7 @@ class ItemReportController extends Controller
                     'smartag_market.tbl_user_login.full_name',
                     'smartag_market.tbl_user_login.phone_no',
                     'smartag_market.tbl_user_address.address_line1',
+                    'smartag_market.tbl_user_address.zone_cd',
                     DB::raw("JSON_AGG(
                     JSON_BUILD_OBJECT(
                         'item_cd', smartag_market.tbl_customer_booking_details.item_cd,
@@ -276,7 +277,8 @@ class ItemReportController extends Controller
                     'smartag_market.tbl_customer_booking_details.is_delivered',
                     'smartag_market.tbl_user_login.full_name',
                     'smartag_market.tbl_user_login.phone_no',
-                    'smartag_market.tbl_user_address.address_line1'
+                    'smartag_market.tbl_user_address.address_line1',
+                    'smartag_market.tbl_user_address.zone_cd'
                 )
                 ->orderBy('smartag_market.tbl_customer_booking_details.order_date', 'desc')
                 ->get();
@@ -596,7 +598,6 @@ class ItemReportController extends Controller
             ->orderBy('item.item_name', 'asc')
             ->get();
 
-        // Log::info("zone_cd XXXXXXXXXXXXXXXXX: ", $zone_cd);
         return view('admin.freshleeMarket.modifyOrder', [
             'user' => $user,
             'items' => $items,
@@ -621,12 +622,11 @@ class ItemReportController extends Controller
         try {
             $item_price = 0;
             $itemPricesResponse = $this->proxyOrderService->getPriceListZoneWiseCustomerWithZoneCD($zone_cd);
+            Log::info("Existing Order Updated****8");
             if ($itemPricesResponse['status']) {
                 $items_prices = $itemPricesResponse['sale_price_data'];
                 $item_price = collect($items_prices)->firstWhere('item_cd', $request->item_cd)['customers_sale_price_per_1kg'];
             }
-
-
 
             if ($item_unit == "gm") {
                 $item_quantity = $item_quantity / 1000;
@@ -648,7 +648,8 @@ class ItemReportController extends Controller
                 ->update([
                     'item_quantity' => $item_quantity,
                     'qty_unit' => $item_unit,
-                    'price' => $price
+                    'price' => $price,
+                    'item_price_rate' => $item_price
                 ]);
             return redirect()->back()->with('success', 'Order updated successfully.');
         } catch (\Exception $e) {
@@ -704,7 +705,6 @@ class ItemReportController extends Controller
                 if ($request->qty_unit == "gm") {
                     $qty = $qty / 1000;
                     $qty_unit = "kg";
-
                 }
 
                 if ($request->qty_unit == "ml") {
@@ -731,6 +731,7 @@ class ItemReportController extends Controller
                     'delivered_at' => $bookingDetails->delivered_at,
                     'qty_unit' => $qty_unit,
                     'price' => $price,
+                    'item_price_rate' => $item_price,
                 ];
                 // insert a new item in the same booking id
                 $insertStatus = DB::table("smartag_market.tbl_customer_booking_details")->insertGetId($data);

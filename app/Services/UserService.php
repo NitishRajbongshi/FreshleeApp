@@ -5,7 +5,8 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class UserService {
+class UserService
+{
     protected $userAddressUrl;
     protected $loginService;
 
@@ -28,8 +29,8 @@ class UserService {
                 'x-access-token' => $accessToken,
                 'Content-Type' => 'application/json',
             ])->get($url, [
-                //
-            ]);
+                        //
+                    ]);
 
             if ($response->successful()) {
                 return $response->json();
