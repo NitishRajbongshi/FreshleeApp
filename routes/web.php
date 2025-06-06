@@ -51,6 +51,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth.user', 'auth.admin']],
     Route::post("order/report/history", [ItemReportController::class, 'reportHistory'])->name('admin.order.report.history');
     Route::post('order/report/weekly', [ItemReportController::class, 'downloadWeeklyReport'])->name('download.report.weekly');
     Route::post('order/invoice', [InvoiceController::class, 'generateInvoice'])->name('generate.invoice');
+    Route::post('history/invoice', [InvoiceController::class, 'generateHistoryInvoice'])->name('generate.history.invoice');
 
     // Proxy order for users
     Route::get('order/user-list', [ProxyOrderController::class, 'index'])->name('admin.proxy.user.list');

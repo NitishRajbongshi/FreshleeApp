@@ -116,7 +116,7 @@
                                         <form action="{{ route('admin.user.order.update') }}" method="POST"
                                             class="d-flex gap-1">
                                             @csrf
-                                             <input type="hidden" class="form-control form-control-sm" name="zncd"
+                                             <input type="text" class="form-control form-control-sm" name="zncd"
                                                 value="{{ $zone_cd }}">
                                             <input type="hidden" class="form-control form-control-sm" name="item_id"
                                                 value="{{ $order->id }}">
